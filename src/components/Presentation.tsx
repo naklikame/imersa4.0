@@ -21,7 +21,7 @@ export default function Presentation() {
     >
       <div
         className="absolute inset-0 bg-cover bg-center scale-105"
-        style={{ backgroundImage: "url('/pozadidemo.jpg')", filter: 'blur(3px)' }}
+        style={{ backgroundImage: "url('/demofoto.png')", filter: 'blur(3px)' }}
       />
       <div className="absolute inset-0 bg-[#0e1410]/25" />
 
@@ -75,7 +75,7 @@ export default function Presentation() {
                     {!isDemoActive ? (
                       <div className="absolute inset-0 cursor-pointer group" onClick={() => setIsDemoActive(true)}>
                         <img
-                          src="/src/assets/granviademo.png"
+                          src="/demofoto.png"
                           alt="Gran Via Residence"
                           className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
                         />
