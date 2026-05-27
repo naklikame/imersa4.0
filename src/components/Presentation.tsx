@@ -21,7 +21,7 @@ export default function Presentation() {
     >
       <div
         className="absolute inset-0 bg-cover bg-center scale-105"
-        style={{ backgroundImage: "url('/demofoto.png')", filter: 'blur(3px)' }}
+        style={{ backgroundImage: "url('/pozadidemo.jpg')", filter: 'blur(3px)' }}
       />
       <div className="absolute inset-0 bg-[#0e1410]/25" />
 
