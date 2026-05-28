@@ -4,6 +4,16 @@ import { Mail, Phone, MapPin, ArrowRight, ExternalLink, Globe, CheckCircle2 } fr
 
 const PROJECT_TYPES = ['3D Konfigurátor', 'Vizualizace nemovitosti', 'Prezentační web', 'Jiné'];
 
+function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/50">{label}</label>
+      {children}
+      {error && <p className="text-[11px] text-red-400/80">{error}</p>}
+    </div>
+  );
+}
+
 export default function Footer() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
@@ -11,6 +21,8 @@ export default function Footer() {
   const [form, setForm] = useState({ name: '', email: '', project: '', message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   function validate() {
     const e: Record<string, string> = {};
@@ -20,22 +32,51 @@ export default function Footer() {
     return e;
   }
 
-  function handleSubmit(ev: React.FormEvent) {
+  async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setErrors({});
-    setSent(true);
-  }
+    setSubmitError(false);
+    setLoading(true);
 
-  function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactNode }) {
-    return (
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor={id} className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/50">{label}</label>
-        {children}
-        {error && <p className="text-[11px] text-red-400/80">{error}</p>}
-      </div>
-    );
+    const message = `Nová poptávka z webu imersa.cz
+
+Kontaktní údaje:
+• Jméno: ${form.name}
+• Email: ${form.email}
+• Typ projektu: ${form.project || 'neuvedeno'}
+
+Zpráva:
+${form.message}
+
+---
+Odesláno automaticky z imersa.cz`;
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: '57f29e4e-ca5d-4b42-8e81-87e0350b07cd',
+          subject: `Nová poptávka od ${form.name} — imersa.cz`,
+          name: form.name,
+          email: form.email,
+          replyto: form.email,
+          message,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSent(true);
+      } else {
+        setSubmitError(true);
+      }
+    } catch {
+      setSubmitError(true);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -100,10 +141,9 @@ export default function Footer() {
                   </a>
                 ))}
               </div>
-
             </motion.div>
 
-            {/* ── Right — form directly on background ── */}
+            {/* ── Right — form ── */}
             <motion.div
               initial={{ opacity: 0, y: 28 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -145,10 +185,14 @@ export default function Footer() {
                         className={`bg-white/[0.06] text-white placeholder-white/20 text-[13px] px-4 py-3.5 rounded-xl border outline-none focus:border-white/25 focus:bg-white/[0.09] transition-all resize-none ${errors.message ? 'border-red-400/50' : 'border-white/[0.10]'}`} />
                     </Field>
 
-                    <button type="submit"
-                      className="group w-full flex items-center justify-center gap-3 px-6 py-4 rounded-full bg-forest text-white text-[12px] font-bold uppercase tracking-[0.15em] hover:bg-[#4a6741] transition-all duration-300 hover:-translate-y-0.5 shadow-[0_8px_24px_rgba(74,103,65,0.35)]">
-                      Odeslat poptávku
-                      <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
+                    {submitError && (
+                      <p className="text-[12px] text-red-400/80 text-center">Nepodařilo se odeslat. Zkuste to prosím znovu.</p>
+                    )}
+
+                    <button type="submit" disabled={loading}
+                      className="group w-full flex items-center justify-center gap-3 px-6 py-4 rounded-full bg-forest text-white text-[12px] font-bold uppercase tracking-[0.15em] hover:bg-[#4a6741] transition-all duration-300 hover:-translate-y-0.5 shadow-[0_8px_24px_rgba(74,103,65,0.35)] disabled:opacity-60 disabled:cursor-not-allowed">
+                      {loading ? 'Odesílám…' : 'Odeslat poptávku'}
+                      {!loading && <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />}
                     </button>
 
                   </motion.form>

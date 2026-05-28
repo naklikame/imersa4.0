@@ -133,7 +133,7 @@ export default function Blog() {
 
         {/* Cards */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
-          {articles.map((article, i) => (
+          {articles.slice(0, 3).map((article, i) => (
             <motion.article
               key={i}
               initial={{ opacity: 0, y: 30 }}

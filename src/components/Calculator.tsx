@@ -1,6 +1,6 @@
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { Info, ArrowUpRight, Check, Globe, Building2, Settings, HeadphonesIcon, Mail, CheckCircle2, FileDown, X, Phone, User, Megaphone } from 'lucide-react';
+import { Info, ArrowUpRight, Check, Globe, Building2, Settings, HeadphonesIcon, FileDown, X, Phone, User, Megaphone, Mail } from 'lucide-react';
 
 /* ─── Data ──────────────────────────────────────────────────────────── */
 
@@ -366,6 +366,73 @@ function useCountUp(target: number, duration = 500) {
   return display;
 }
 
+/* ─── Price Panel ───────────────────────────────────────────────────── */
+
+interface PricePanelProps {
+  projectType: ProjectTypeId | null;
+  total: number;
+  totalRaw: number;
+  lines: { label: string; price: number }[];
+  setShowPoptavka: (v: boolean) => void;
+  generatePDF: () => void;
+}
+
+function PricePanel({ projectType, total, totalRaw, lines, setShowPoptavka, generatePDF }: PricePanelProps) {
+  return (
+    <div className="bg-[#2C3B2A] rounded-2xl p-7 shadow-2xl shadow-anthracite/20">
+      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40 mb-5">Odhadovaná investice</p>
+
+      <motion.div initial={{ opacity: 0.6, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
+        className="mb-6 pb-6 border-b border-white/10">
+        {!projectType
+          ? <p className="text-2xl font-display font-extrabold text-white/30 leading-snug">Nejprve vyberte<br/>typ projektu</p>
+          : total === 0
+            ? <p className="text-3xl font-display font-extrabold text-white/30 leading-none">Vyberte služby</p>
+            : <>
+                <p className="text-[42px] font-display font-extrabold text-white leading-none tracking-tight">{formatPrice(total)}</p>
+                <p className="text-[12px] text-white/35 mt-2">orientační cena bez DPH</p>
+              </>
+        }
+      </motion.div>
+
+      {lines.length > 0 && (
+        <div className="space-y-2.5 mb-6 pb-6 border-b border-white/10">
+          {lines.map(line => (
+            <div key={line.label} className="flex items-center justify-between gap-3">
+              <span className="text-[12px] text-white/55">{line.label}</span>
+              <span className="text-[12px] font-bold text-white/70 whitespace-nowrap">{formatPrice(line.price)}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={() => setShowPoptavka(true)}
+        className="group w-full flex items-center justify-center gap-3 px-6 py-4 rounded-full bg-white text-[#2C3B2A] text-[12px] font-bold uppercase tracking-[0.15em] hover:bg-greige transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-black/20 mb-3">
+        <span>Odeslat poptávku</span>
+        <span className="w-6 h-6 rounded-full bg-[#2C3B2A]/10 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+          <ArrowUpRight size={12} />
+        </span>
+      </button>
+
+      <button
+        type="button"
+        onClick={generatePDF}
+        disabled={totalRaw === 0}
+        className="group w-full flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-white/10 text-white text-[12px] font-bold uppercase tracking-[0.15em] hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 mb-4"
+      >
+        <FileDown size={14} className="opacity-70" />
+        Stáhnout kalkulaci
+      </button>
+
+      <p className="text-[11px] text-white/20 text-center mt-4 leading-relaxed">
+        Finální cenu upřesníme po konzultaci.<br />Odpovídáme do 24 hodin.
+      </p>
+    </div>
+  );
+}
+
 /* ─── Main ──────────────────────────────────────────────────────────── */
 
 export default function Calculator() {
@@ -386,9 +453,6 @@ export default function Calculator() {
 
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [radioValues, setRadioValues] = useState<Record<string, string>>({ web: '', podpora: 'podpora_zadna' });
-  const [email, setEmail] = useState('');
-  const [emailSent, setEmailSent] = useState(false);
-  const [emailError, setEmailError] = useState(false);
   const [showPoptavka, setShowPoptavka] = useState(false);
   const [projectType, setProjectType] = useState<ProjectTypeId | null>(null);
 
@@ -429,7 +493,11 @@ export default function Calculator() {
   });
 
   function generatePDF() {
-    const date = new Date().toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' });
+    const now = new Date();
+    const date = now.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' });
+    const refNum = `IMS-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+    const logoUrl = `${window.location.origin}/logo.svg`;
+    const projectTypeInfo = PROJECT_TYPES.find(p => p.id === projectType);
 
     const selectedItems = SECTIONS.flatMap(section => {
       if (section.type === 'radio') {
@@ -491,6 +559,20 @@ export default function Calculator() {
   .footer-contact a { color: #4A6741; text-decoration: none; font-weight: 600; }
 
   .empty { padding: 40px; text-align: center; color: #bbb; font-size: 14px; }
+
+  .project-type-badge { display: inline-flex; align-items: center; gap: 8px; background: #F0F4EE; border: 1px solid #C8D8C4; border-radius: 8px; padding: 8px 14px; margin-bottom: 20px; }
+  .project-type-badge .pt-label { font-size: 12px; font-weight: 700; color: #4A6741; text-transform: uppercase; letter-spacing: .08em; }
+  .project-type-badge .pt-desc { font-size: 12px; color: #666; }
+
+  .next-steps { margin-top: 40px; padding: 28px 32px; background: #F5F4F1; border-radius: 12px; }
+  .next-steps h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .15em; color: #4A6741; margin-bottom: 20px; }
+  .steps { display: flex; gap: 0; }
+  .step { flex: 1; position: relative; padding-right: 24px; }
+  .step:last-child { padding-right: 0; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: #2C3B2A; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+  .step-title { font-size: 13px; font-weight: 700; color: #2D2D2D; margin-bottom: 4px; }
+  .step-text { font-size: 12px; color: #888; line-height: 1.5; }
+  .step-arrow { position: absolute; right: 4px; top: 6px; color: #C8D8C4; font-size: 18px; }
 </style>
 </head>
 <body>
@@ -498,13 +580,12 @@ export default function Calculator() {
 
   <div class="header">
     <div class="logo">
-      <div class="logo-box">I</div>
-      <span class="logo-name">imersa</span>
+      <img src="${logoUrl}" alt="imersa" style="height:28px;width:auto;object-fit:contain;" />
     </div>
     <div class="meta">
       <div><strong>Cenová kalkulace</strong></div>
       <div>${date}</div>
-      <div>Orientační nabídka</div>
+      <div style="color:#4A6741;font-weight:600;">Ref: ${refNum}</div>
     </div>
   </div>
 
@@ -512,6 +593,12 @@ export default function Calculator() {
     <div class="label">Váš výběr služeb</div>
     <h1>Sestavená kalkulace projektu</h1>
     <p class="subtitle">Níže naleznete přehled zvolených služeb včetně jejich popisu a orientační ceny. Finální cenu upřesníme po úvodní konzultaci zdarma.</p>
+    ${projectTypeInfo ? `
+    <div class="project-type-badge" style="margin-top:16px;">
+      <span class="pt-label">Typ projektu: ${projectTypeInfo.label}</span>
+      <span style="color:#C8D8C4;">|</span>
+      <span class="pt-desc">${projectTypeInfo.description}</span>
+    </div>` : ''}
   </div>
 
   ${selectedItems.length === 0
@@ -528,6 +615,29 @@ export default function Calculator() {
       </table>
       <div class="vat-note">* Ceny jsou orientační a nezahrnují DPH. Finální nabídku připravíme po konzultaci.</div>`
   }
+
+  <div class="next-steps">
+    <h3>Jak pokračovat dál?</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Nezávazná konzultace</div>
+        <div class="step-text">Ozvěte se nám — konzultace je zdarma a nezávazná. Projdeme vaši vizi a upřesníme rozsah projektu.</div>
+        <span class="step-arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Přesná nabídka</div>
+        <div class="step-text">Na základě konzultace připravíme detailní nabídku s pevnou cenou a harmonogramem.</div>
+        <span class="step-arrow">→</span>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Spuštění projektu</div>
+        <div class="step-text">Po odsouhlasení zahájíme práce. Průběžně vás informujeme o postupu.</div>
+      </div>
+    </div>
+  </div>
 
   <div class="footer">
     <div class="footer-note">
@@ -553,98 +663,8 @@ export default function Calculator() {
     win.onload = () => { win.focus(); win.print(); };
   }
 
-  function handleSendEmail() {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setEmailError(true); return; }
-    setEmailError(false);
-    setEmailSent(true);
-  }
-
-  /* ── Price panel content (shared between inline & fixed) ── */
-  const PricePanel = () => (
-    <div className="bg-[#2C3B2A] rounded-2xl p-7 shadow-2xl shadow-anthracite/20">
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40 mb-5">Odhadovaná investice</p>
-
-      <motion.div initial={{ opacity: 0.6, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
-        className="mb-6 pb-6 border-b border-white/10">
-        {!projectType
-          ? <p className="text-2xl font-display font-extrabold text-white/30 leading-snug">Nejprve vyberte<br/>typ projektu</p>
-          : total === 0
-            ? <p className="text-3xl font-display font-extrabold text-white/30 leading-none">Vyberte služby</p>
-            : <>
-                <p className="text-[42px] font-display font-extrabold text-white leading-none tracking-tight">{formatPrice(total)}</p>
-                <p className="text-[12px] text-white/35 mt-2">orientační cena bez DPH</p>
-              </>
-        }
-      </motion.div>
-
-      {lines.length > 0 && (
-        <div className="space-y-2.5 mb-6 pb-6 border-b border-white/10">
-          {lines.map(line => (
-            <div key={line.label} className="flex items-center justify-between gap-3">
-              <span className="text-[12px] text-white/55">{line.label}</span>
-              <span className="text-[12px] font-bold text-white/70 whitespace-nowrap">{formatPrice(line.price)}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <button
-        type="button"
-        onClick={() => setShowPoptavka(true)}
-        className="group w-full flex items-center justify-center gap-3 px-6 py-4 rounded-full bg-white text-[#2C3B2A] text-[12px] font-bold uppercase tracking-[0.15em] hover:bg-greige transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-black/20 mb-3">
-        <span>Odeslat poptávku</span>
-        <span className="w-6 h-6 rounded-full bg-[#2C3B2A]/10 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-          <ArrowUpRight size={12} />
-        </span>
-      </button>
-
-      <button
-        type="button"
-        onClick={generatePDF}
-        disabled={totalRaw === 0}
-        className="group w-full flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-white/10 text-white text-[12px] font-bold uppercase tracking-[0.15em] hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 mb-4"
-      >
-        <FileDown size={14} className="opacity-70" />
-        Zobrazit PDF
-      </button>
-
-      <div className="border-t border-white/10 pt-5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 mb-3 flex items-center gap-2">
-          <Mail size={11} /> Poslat kalkulaci na mail
-        </p>
-        <AnimatePresence mode="wait">
-          {!emailSent ? (
-            <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="flex gap-2">
-                <input type="email" value={email} onChange={e => { setEmail(e.target.value); setEmailError(false); }}
-                  placeholder="vas@email.cz"
-                  className={`flex-1 min-w-0 bg-white/10 text-white placeholder-white/25 text-[12px] px-3.5 py-2.5 rounded-xl border outline-none focus:border-white/30 transition-colors duration-200 ${emailError ? 'border-red-400/60' : 'border-white/15'}`} />
-                <button onClick={handleSendEmail} disabled={total === 0} type="button"
-                  className="flex-shrink-0 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 disabled:opacity-30 disabled:cursor-not-allowed text-white text-[11px] font-bold uppercase tracking-wider transition-all duration-200">
-                  Poslat
-                </button>
-              </div>
-              {emailError && <p className="text-[11px] text-red-400/80 mt-1.5 ml-1">Zadejte platný e-mail.</p>}
-              {total === 0 && <p className="text-[11px] text-white/25 mt-1.5 ml-1">Nejprve vyberte alespoň jednu službu.</p>}
-            </motion.div>
-          ) : (
-            <motion.div key="sent" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-white/10">
-              <CheckCircle2 size={16} className="text-white/70 flex-shrink-0" />
-              <p className="text-[12px] text-white/70">Kalkulace odeslána na <span className="text-white font-semibold">{email}</span></p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <p className="text-[11px] text-white/20 text-center mt-4 leading-relaxed">
-        Finální cenu upřesníme po konzultaci.<br />Odpovídáme do 24 hodin.
-      </p>
-    </div>
-  );
-
   return (
-    <section id="cenik" ref={ref} className="py-16 lg:py-28 relative overflow-hidden">
+    <section id="cenik" ref={ref} className="py-16 lg:py-28 relative">
       <style>{`
         @keyframes calc-ambient-a {
           0%   { transform: translate(0%, 0%) scale(1); }
@@ -660,22 +680,22 @@ export default function Calculator() {
         }
       `}</style>
 
-      {/* Warm greige base */}
-      <div className="absolute inset-0 bg-[#E0DDD3]" />
-
-      {/* Ambient blobs */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse 60% 50% at 10% 55%, rgba(74,103,65,0.18) 0%, transparent 70%)',
-        animation: 'calc-ambient-a 20s ease-in-out infinite alternate',
-      }} />
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse 45% 55% at 88% 25%, rgba(74,103,65,0.14) 0%, transparent 65%)',
-        animation: 'calc-ambient-b 26s ease-in-out infinite alternate',
-      }} />
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse 40% 40% at 50% 85%, rgba(74,103,65,0.10) 0%, transparent 65%)',
-        animation: 'calc-ambient-c 32s ease-in-out infinite alternate',
-      }} />
+      {/* Warm greige base + ambient blobs — wrapped in overflow-hidden so blobs don't spill outside section */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 bg-[#E0DDD3]" />
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(ellipse 60% 50% at 10% 55%, rgba(74,103,65,0.18) 0%, transparent 70%)',
+          animation: 'calc-ambient-a 20s ease-in-out infinite alternate',
+        }} />
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(ellipse 45% 55% at 88% 25%, rgba(74,103,65,0.14) 0%, transparent 65%)',
+          animation: 'calc-ambient-b 26s ease-in-out infinite alternate',
+        }} />
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(ellipse 40% 40% at 50% 85%, rgba(74,103,65,0.10) 0%, transparent 65%)',
+          animation: 'calc-ambient-c 32s ease-in-out infinite alternate',
+        }} />
+      </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -781,7 +801,14 @@ export default function Calculator() {
           {/* Right — Price panel sticky (desktop only) */}
           <motion.div initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.25 }}
             className="hidden lg:block sticky top-24 self-start">
-            <PricePanel />
+            <PricePanel
+              projectType={projectType}
+              total={total}
+              totalRaw={totalRaw}
+              lines={lines}
+              setShowPoptavka={setShowPoptavka}
+              generatePDF={generatePDF}
+            />
           </motion.div>
 
         </div>
@@ -811,14 +838,26 @@ export default function Calculator() {
                   </>
                 )}
               </div>
-              <button
-                type="button"
-                onClick={() => setShowPoptavka(true)}
-                className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full bg-white text-[#2C3B2A] text-[12px] font-bold uppercase tracking-[0.1em] transition-all duration-200 active:scale-95"
-              >
-                Poptávka
-                <ArrowUpRight size={12} />
-              </button>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {totalRaw > 0 && (
+                  <button
+                    type="button"
+                    onClick={generatePDF}
+                    className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center text-white transition-all duration-200 active:scale-95 hover:bg-white/25"
+                    aria-label="Stáhnout kalkulaci PDF"
+                  >
+                    <FileDown size={16} />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setShowPoptavka(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white text-[#2C3B2A] text-[12px] font-bold uppercase tracking-[0.1em] transition-all duration-200 active:scale-95"
+                >
+                  Poptávka
+                  <ArrowUpRight size={12} />
+                </button>
+              </div>
             </div>
           </motion.div>
         )}

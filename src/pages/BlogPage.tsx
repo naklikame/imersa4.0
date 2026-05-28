@@ -11,6 +11,8 @@ export default function BlogPage() {
   const featured = articles.slice(0, FEATURED_COUNT);
   const [active, setActive] = useState(0);
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   // Reset interval whenever active changes (handles both auto-advance & dot click)
   useEffect(() => {
     const t = setInterval(() => setActive(i => (i + 1) % featured.length), INTERVAL_MS);

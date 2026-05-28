@@ -16,6 +16,40 @@ export type Article = {
 
 export const articles: Article[] = [
   {
+    slug: '5-chyb-developeri-prodej-off-plan',
+    image: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=900&q=80',
+    category: 'Návod',
+    date: '22. května 2026',
+    title: '5 chyb, které developeři dělají při prodeji off-plan bytů',
+    excerpt: 'Od čekání na fyzický showroom po skrývání cen — chyby, které zbytečně prodlužují prodejní cyklus a stojí statisíce.',
+    readTime: '6 min čtení',
+    content: {
+      lead: 'Off-plan prodej je pro developera ideální situace — peníze přicházejí dřív, než je stavba hotová, a riziko neprodaných jednotek klesá. Přesto většina developerů nechává značnou část tohoto potenciálu ležet ladem. Ne kvůli špatnému projektu, ale kvůli předvídatelným chybám v prodejním procesu.',
+      sections: [
+        {
+          heading: 'Chyba č. 1: Čekání na fyzický showroom',
+          body: 'Nejčastější a nejdražší chyba. Developer zahájí prodej až po dokončení vzorového bytu — přichází tak o 6 až 12 měsíců prodejního okna ve fázi, kdy je zájem kupujících nejvyšší a ceny nejvýhodnější. Fyzický showroom stojí 200 000 až 500 000 Kč, je přístupný jen v pracovní době a obslouží zlomek zájemců. Interaktivní digitální prezentace spuštěná od prvního dne prodeje tento problém řeší — zákazník si byt "projde" v libovolnou hodinu, z gauče, z telefonu.',
+        },
+        {
+          heading: 'Chyba č. 2: Statické renderingy jako jediná vizuální prezentace',
+          body: 'Sada pěti až deseti renderingů byla standard roku 2018. Dnes zákazník srovnává váš projekt s desítkami dalších a statický obrázek mu nedá odpověď na klíčové otázky: Jak velký ten obývák skutečně je? Jaký bude výhled z ložnice? Kam dopadne ráno slunce? Projekty, které na tyto otázky odpoví interaktivně — procházením prostoru v reálném čase — získávají zákazníky s výrazně vyšším stupněm přesvědčení ještě před první osobní schůzkou.',
+        },
+        {
+          heading: 'Chyba č. 3: Skrývání cen a disponibility',
+          body: '"Cenu sdělíme na vyžádání" je věta, která zákazníka přesměruje ke konkurenci. Dnešní kupující zvyklý na e-commerce transparentnost interpretuje skryté ceny jako signál problému — buď je cena příliš vysoká, nebo disponibilita špatná. Weby s veřejně zobrazenou cenou, stavem prodeje a okamžitou kalkulací splátky konvertují prokazatelně lépe. Transparentnost buduje důvěru, důvěra urychluje rozhodnutí.',
+        },
+        {
+          heading: 'Chyba č. 4: Ignorování mobilních uživatelů',
+          body: 'Více než 65 % prvního kontaktu s realitním projektem probíhá na mobilním zařízení. Přesto velká část developerských webů nabízí na telefonu jen nefunkční verzi desktopové stránky — přiblížené PDF, neklikatelné tlačítko, vizualizaci oříznutou na půl. Zákazník odchází během prvních 8 sekund. Mobilní optimalizace není nice-to-have, je to vstupní podmínka pro relevantní prezentaci v roce 2026.',
+        },
+        {
+          heading: 'Chyba č. 5: Žádná možnost self-service pro zákazníka',
+          body: 'Tradiční model vyžaduje, aby zákazník prošel obchodníkem při každém kroku — chce vidět konkrétní byt, musí zavolat. Chce zjistit splátku, musí čekat na e-mail. Toto tření přímo koreluje s délkou prodejního cyklu. Zákazníci, kteří si mohou sami projít dostupné jednotky, filtrovat podle dispozice a okamžitě vidět orientační splátku, přicházejí na schůzku rozhodnutí — ne zvědaví. Prodejní cyklus se zkracuje průměrně o 40 %.',
+        },
+      ],
+    },
+  },
+  {
     slug: 'zvyseni-prodeje-25-procent',
     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=80',
     category: 'Case Study',
