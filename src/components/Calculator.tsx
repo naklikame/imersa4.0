@@ -1,57 +1,80 @@
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Info, ArrowUpRight, Check, Globe, Building2, Settings, HeadphonesIcon, FileDown, X, Phone, User, Megaphone, Mail } from 'lucide-react';
+
+/* ─── Types ─────────────────────────────────────────────────────────── */
+
+type ProjectTypeId = 'small' | 'medium' | 'large';
+
+interface Item {
+  id: string;
+  label: string;
+  prices: [number, number, number]; // [small, medium, large]
+  info: string;
+  freeWithKonfigurator?: boolean;
+}
+
+interface Section {
+  id: string;
+  title: string;
+  icon: React.ElementType;
+  type: 'radio' | 'checkbox';
+  items: Item[];
+}
 
 /* ─── Data ──────────────────────────────────────────────────────────── */
 
-const SECTIONS = [
+const SECTIONS: Section[] = [
   {
     id: 'web', title: 'Web', icon: Globe, type: 'radio',
     items: [
-      { id: 'web_s', label: 'S konfigurátorem', price: 50000, info: 'Interaktivní 3D konfigurátor bytů — výběr dispozice, materiálů a vybavení v reálném čase přímo na webu.' },
-      { id: 'web_bez', label: 'Bez konfigurátoru', price: 20000, info: 'Prezentační microsite projektu s vizuály, popisem a kontaktním formulářem.' },
+      { id: 'web_s',   label: 'S konfigurátorem',  prices: [25000, 35000, 55000], info: 'Interaktivní 3D konfigurátor bytů — výběr dispozice, materiálů a vybavení v reálném čase přímo na webu.' },
+      { id: 'web_bez', label: 'Bez konfigurátoru', prices: [8000, 12000, 17000],  info: 'Prezentační microsite projektu s vizuály, popisem a kontaktním formulářem.' },
     ],
   },
   {
     id: 'nemovitosti', title: 'Nemovitosti', icon: Building2, type: 'checkbox',
     items: [
-      { id: 'int_ext', label: 'Interiér + exteriér', price: 15000, info: 'Fotorealistické rendery, zasazení do reálného prostředí. Nemáte záběry z dronu? Doporučujeme přidat službu „Záběry z dronu".' },
-      { id: 'matterport', label: 'Matterport', price: 5000, info: 'Máte již hotovou typovou jednotku, kterou chcete prezentovat? 360° prohlídka reálného prostoru.' },
-      { id: 'virtual', label: 'Virtuální prohlídka', price: 3000, info: 'Potřebujete 360° virtuální prohlídku a statické vizualizace Vám nestačí? Uděláme kompletní virtuální prohlídku vizualizací.' },
-      { id: 'int_ext_anim', label: 'Interiér/Exteriér animace', price: 4000, info: 'Ukažte přechody mezi statickými vizualizacemi — vylepší vizuální vzhled prezentace a doplní klasické vizualizace.' },
-      { id: 'pudorysy', label: '2D + 3D půdorysy', price: 1200, info: 'Přehledné půdorysy v klasickém 2D i moderním 3D provedení pro každou bytovou jednotku.' },
-      { id: 'dron', label: 'Záběry z dronu', price: 3000, info: 'Profesionální záběry nemovitosti a okolí. Fotky slouží také k zasazení do vizualizací.' },
+      { id: 'interier',    label: 'Interiér',           prices: [4000, 17000, 38000], info: 'Fotorealistické interiérové rendery bytových jednotek — materiály, osvětlení, atmosféra.' },
+      { id: 'exteriér',    label: 'Exteriér',           prices: [6000, 15000, 30000], info: 'Fotorealistické exteriérové rendery zasazené do reálného prostředí. Doporučujeme doplnit záběry z dronu.' },
+      { id: 'int_anim',    label: 'Interiér animace',   prices: [2500, 5000, 10000],  info: 'Krátká animace interiéru — plynulý průlet prostorem, který doplní statické vizualizace.' },
+      { id: 'ext_anim',    label: 'Exteriér animace',   prices: [3000, 5000, 8000],   info: 'Krátká animace exteriéru — přechody, záběry z výšky, nebo pohled od ulice ke vchodu.' },
+      { id: 'matterport',  label: 'Matterport',         prices: [2500, 6000, 15000],  info: 'Máte již hotovou typovou jednotku? 360° prohlídka reálného prostoru. Upozornění: Matterport účtuje zvlášť měsíční poplatek za uložiště.' },
+      { id: 'virtual',     label: 'Virtuální prohlídka',prices: [1000, 2000, 5000],   info: 'Potřebujete 360° virtuální prohlídku a statické vizualizace Vám nestačí? Uděláme kompletní virtuální prohlídku vizualizací.' },
+      { id: 'pudorysy_2d', label: '2D půdorysy',        prices: [600, 2000, 5000],    info: 'Přehledné půdorysy v klasickém 2D provedení pro každou bytovou jednotku. Zdarma k webu s konfigurátorem.', freeWithKonfigurator: true },
+      { id: 'pudorysy_3d', label: '3D půdorysy',        prices: [1200, 4000, 10000],  info: 'Moderní 3D půdorysy pro každou bytovou jednotku. Zdarma k webu s konfigurátorem.', freeWithKonfigurator: true },
+      { id: 'dron',        label: 'Záběry z dronu',     prices: [2000, 4000, 6000],   info: 'Profesionální záběry nemovitosti a okolí. Fotky slouží také k zasazení do vizualizací.' },
     ],
   },
   {
     id: 'moznosti', title: 'Možnosti webu', icon: Settings, type: 'checkbox',
     items: [
-      { id: 'cms', label: 'CMS Systém', price: 5000, info: 'Redakční systém pro snadnou správu obsahu webu bez potřeby programátora — texty, fotky, ceny.' },
-      { id: 'vyhledavani', label: 'Vyhledávání jednotky', price: 8000, info: 'Filtrování a vyhledávání dostupných bytových jednotek dle dispozice, patra nebo ceny.' },
-      { id: 'kalkulator', label: 'Live kalkulačka', price: 6000, info: 'Interaktivní kalkulačka pro zákazníky — spočítají si orientační měsíční splátku přímo na webu.' },
-      { id: 'mobil', label: 'Mobilní optimalizace', price: 4000, info: 'Plná optimalizace pro mobilní zařízení a tablety, včetně dotykového ovládání 3D konfigurátoru.' },
+      { id: 'cms',          label: 'CMS Systém',                      prices: [5000, 8000, 10000], info: 'Redakční systém pro snadnou správu obsahu webu bez potřeby programátora — texty, fotky, ceny.' },
+      { id: 'kalkulator',   label: 'Live kalkulačka',                 prices: [3000, 3000, 3000],  info: 'Interaktivní kalkulačka pro zákazníky — spočítají si orientační měsíční splátku přímo na webu.' },
+      { id: 'jazykova_mutace', label: 'Jazyková mutace',              prices: [4000, 6000, 8000],  info: 'Překlad webu do cizího jazyka (angličtina, němčina aj.) — kompletní lokalizace obsahu včetně přepínače jazyků.' },
+      { id: 'ai_asistent',  label: 'AI asistent',                     prices: [3000, 4500, 6000],  info: 'AI asistent na vašem webu rovnou zodpoví drobné a časté dotazy (k materiálům, cenám či lokalitě). Zájemci nemusí čekat na e-mail a vaši makléři ušetří čas pro vážná jednání.' },
+      { id: 'katalog',      label: 'Katalog standardů a karet bytů', prices: [4000, 4000, 4000],  info: 'Vygenerování nebo grafické zpracování profesionální PDF brožury, kterou mohou makléři tisknout nebo posílat e-mailem.' },
     ],
   },
   {
     id: 'marketing', title: 'Marketing', icon: Megaphone, type: 'radio',
     items: [
-      { id: 'marketing_ano', label: 'Chci konzultaci', price: 0, info: 'Postaráme se o propagaci vašeho projektu! Pomůžeme s: balíčkem videí na sociální sítě s tvorbou scénářů, tvorbou reklamního videa, spuštěním propagace na YouTube, Google Ads, Sklik, Instagram, Facebook, TikTok a správou sociálních sítí po dobu aktuálnosti projektu.' },
-      { id: 'marketing_ne', label: 'Nechci konzultaci', price: 0, info: 'Máme na prezentaci externí agenturu.' },
+      { id: 'marketing_ano', label: 'Chci konzultaci zdarma', prices: [0, 0, 0], info: 'Postaráme se o propagaci vašeho projektu! Pomůžeme s: balíčkem videí na sociální sítě s tvorbou scénářů, tvorbou reklamního videa, spuštěním propagace na YouTube, Google Ads, Sklik, Instagram, Facebook, TikTok a správou sociálních sítí po dobu aktuálnosti projektu.' },
+      { id: 'marketing_ne',  label: 'Nechci konzultaci',       prices: [0, 0, 0], info: 'Máme na prezentaci externí agenturu.' },
     ],
   },
   {
     id: 'podpora', title: 'Podpora', icon: HeadphonesIcon, type: 'radio',
     items: [
-      { id: 'podpora_zadna', label: 'Žádná', price: 0, info: 'Bez technické podpory po spuštění. Vhodné pokud máte vlastní IT tým.' },
-      { id: 'podpora_standard', label: 'Standardní', price: 3000, info: 'Podpora v pracovní době (Po–Pá 9–17), odezva do 24 hodin. Měsíční paušál.' },
-      { id: 'podpora_247', label: '24/7', price: 8000, info: 'Nonstop technická podpora, odezva do 2 hodin. Vhodné pro projekty s vysokou návštěvností. Měsíční paušál.' },
+      { id: 'podpora_zadna',    label: 'Žádná',       prices: [0, 0, 0],          info: 'Bez technické podpory po spuštění. Vhodné pokud máte vlastní IT tým.' },
+      { id: 'podpora_standard', label: 'Standardní',  prices: [1500, 3000, 4500], info: 'Podpora v pracovní době (Po–Pá 9–17), odezva do 24 hodin. Měsíční paušál.' },
+      { id: 'podpora_247',      label: '24/7',         prices: [3000, 5000, 8000], info: 'Nonstop technická podpora, odezva do 2 hodin. Vhodné pro projekty s vysokou návštěvností. Měsíční paušál.' },
     ],
   },
 ];
 
 /* ─── Typ projektu ──────────────────────────────────────────────────── */
-
-type ProjectTypeId = 'small' | 'medium' | 'large';
 
 const SmallHouseSvg = () => (
   <svg viewBox="0 0 64 56" fill="none" className="w-full h-full">
@@ -86,31 +109,47 @@ const LargeTowerSvg = () => (
   </svg>
 );
 
-const PROJECT_TYPES: { id: ProjectTypeId; label: string; description: string; multiplier: number; Svg: React.FC }[] = [
-  { id: 'small',  label: 'Malý',    description: 'Rodinné domy, vily',  multiplier: 1,   Svg: SmallHouseSvg },
-  { id: 'medium', label: 'Střední', description: '10 – 50 jednotek',    multiplier: 1.5, Svg: MediumBuildingSvg },
-  { id: 'large',  label: 'Velký',   description: '50+ jednotek',        multiplier: 2.5, Svg: LargeTowerSvg },
+const PROJECT_TYPES: { id: ProjectTypeId; label: string; units: string; size: string; description: string; Svg: React.FC }[] = [
+  { id: 'small',  label: 'Komorní projekt',    units: '1–4 jednotky',  size: 'Malý',    description: 'Solitérní vily, rodinné domy, menší řadová výstavba.',    Svg: SmallHouseSvg },
+  { id: 'medium', label: 'Rezidenční projekt', units: '5–20 jednotek', size: 'Střední', description: 'Bytové domy, komunitní čtvrti, větší řadové projekty.',   Svg: MediumBuildingSvg },
+  { id: 'large',  label: 'Developerský celek', units: '20+ jednotek',  size: 'Velký',   description: 'Velké bytové komplexy, polyfunkční domy, komerční zóny.', Svg: LargeTowerSvg },
 ];
 
 /* ─── Tooltip ───────────────────────────────────────────────────────── */
 
 function Tooltip({ text, selected = false }: { text: string; selected?: boolean }) {
   const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+
+  function handleOpen() {
+    if (btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      setPos({ top: r.top + r.height / 2, left: r.right + 8 });
+    }
+    setOpen(true);
+  }
+
   return (
-    <span className="relative inline-flex items-center">
+    <span className="inline-flex items-center">
       <button
-        onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}
-        onFocus={() => setOpen(true)} onBlur={() => setOpen(false)}
+        ref={btnRef}
+        onMouseEnter={handleOpen} onMouseLeave={() => setOpen(false)}
+        onFocus={handleOpen} onBlur={() => setOpen(false)}
         className={`transition-colors duration-200 focus:outline-none ${selected ? 'text-white/70 hover:text-white' : 'text-anthracite/30 hover:text-forest'}`}
         aria-label="Více informací" type="button"
       >
         <Info size={13} strokeWidth={2} />
       </button>
-      {open && (
-        <span className="absolute left-5 top-1/2 -translate-y-1/2 z-50 w-56 bg-anthracite text-greige text-[12px] leading-relaxed rounded-xl px-3 py-2.5 shadow-xl pointer-events-none">
+      {open && createPortal(
+        <span
+          style={{ position: 'fixed', top: pos.top, left: pos.left, transform: 'translateY(-50%)', zIndex: 9999 }}
+          className="w-56 bg-anthracite text-greige text-[12px] leading-relaxed rounded-xl px-3 py-2.5 shadow-xl pointer-events-none"
+        >
           {text}
           <span className="absolute left-[-5px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-t-transparent border-b-transparent border-r-anthracite" />
-        </span>
+        </span>,
+        document.body
       )}
     </span>
   );
@@ -118,9 +157,11 @@ function Tooltip({ text, selected = false }: { text: string; selected?: boolean 
 
 /* ─── Poptávka modal ────────────────────────────────────────────────── */
 
+interface PriceLine { label: string; price: number; free?: boolean }
+
 function PoptavkaModal({ total, lines, onClose }: {
   total: number;
-  lines: { label: string; price: number }[];
+  lines: PriceLine[];
   onClose: () => void;
 }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
@@ -131,6 +172,7 @@ function PoptavkaModal({ total, lines, onClose }: {
 
   function validate() {
     const e: Record<string, string> = {};
+    if (!form.name.trim()) e.name = 'Zadejte jméno';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Zadejte platný e-mail';
     if (!form.phone.trim()) e.phone = 'Zadejte telefonní číslo';
     return e;
@@ -145,7 +187,7 @@ function PoptavkaModal({ total, lines, onClose }: {
     setSubmitError(false);
 
     const kalkulaceText = lines.length > 0
-      ? lines.map(l => `• ${l.label}: od ${l.price.toLocaleString('cs-CZ')} Kč`).join('\n') +
+      ? lines.map(l => `• ${l.label}: ${l.free ? 'Zdarma' : 'od ' + l.price.toLocaleString('cs-CZ') + ' Kč'}`).join('\n') +
         `\n\nCelková odhadovaná investice: od ${total.toLocaleString('cs-CZ')} Kč`
       : 'Žádné položky nebyly vybrány.';
 
@@ -188,7 +230,6 @@ Odesláno automaticky z imersa.cz`;
     }
   }
 
-  // Close on Escape
   useEffect(() => {
     const fn = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', fn);
@@ -212,7 +253,6 @@ Odesláno automaticky z imersa.cz`;
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         className="relative w-full max-w-md bg-[#2C3B2A] rounded-3xl p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
       >
-        {/* Close */}
         <button onClick={onClose} className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition-all duration-200">
           <X size={15} />
         </button>
@@ -223,7 +263,6 @@ Odesláno automaticky z imersa.cz`;
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40 mb-2">Nezávazná poptávka</p>
               <h3 className="text-xl font-display font-extrabold text-white mb-1">Odeslat poptávku</h3>
 
-              {/* Shrnutí kalkulace */}
               {lines.length > 0 && (
                 <div className="mt-4 mb-6 p-4 rounded-2xl bg-white/8 border border-white/10">
                   <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/35 mb-3">Vaše kalkulace</p>
@@ -231,7 +270,9 @@ Odesláno automaticky z imersa.cz`;
                     {lines.map(l => (
                       <div key={l.label} className="flex justify-between gap-2">
                         <span className="text-[12px] text-white/55">{l.label}</span>
-                        <span className="text-[12px] font-semibold text-white/70 whitespace-nowrap">{l.price.toLocaleString('cs-CZ')} Kč</span>
+                        <span className="text-[12px] font-semibold text-white/70 whitespace-nowrap">
+                          {l.free ? 'Zdarma' : l.price.toLocaleString('cs-CZ') + ' Kč'}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -243,17 +284,16 @@ Odesláno automaticky z imersa.cz`;
               )}
 
               <form onSubmit={handleSubmit} noValidate className="space-y-4">
-                {/* Jméno — volitelné */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/50 flex items-center gap-1.5">
-                    <User size={11} />Jméno <span className="text-white/25 normal-case font-normal">(nepovinné)</span>
+                    <User size={11} />Jméno *
                   </label>
                   <input type="text" placeholder="Jan Novák" value={form.name}
-                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                    className="bg-white/10 text-white placeholder-white/25 text-[13px] px-4 py-3 rounded-xl border border-white/15 outline-none focus:border-white/35 transition-colors" />
+                    onChange={e => { setForm(f => ({ ...f, name: e.target.value })); setErrors(ev => ({ ...ev, name: '' })); }}
+                    className={`bg-white/10 text-white placeholder-white/25 text-[13px] px-4 py-3 rounded-xl border outline-none focus:border-white/35 transition-colors ${errors.name ? 'border-red-400/70' : 'border-white/15'}`} />
+                  {errors.name && <p className="text-[11px] text-red-400/80">{errors.name}</p>}
                 </div>
 
-                {/* Email — povinné */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/50 flex items-center gap-1.5">
                     <Mail size={11} />E-mail *
@@ -264,7 +304,6 @@ Odesláno automaticky z imersa.cz`;
                   {errors.email && <p className="text-[11px] text-red-400/80">{errors.email}</p>}
                 </div>
 
-                {/* Telefon — povinné */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/50 flex items-center gap-1.5">
                     <Phone size={11} />Telefonní číslo *
@@ -288,7 +327,6 @@ Odesláno automaticky z imersa.cz`;
           ) : (
             <motion.div key="success" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="flex flex-col items-center text-center py-6 gap-5">
-              {/* Animovaná fajfka */}
               <div className="relative w-20 h-20">
                 <motion.div
                   initial={{ scale: 0 }}
@@ -306,7 +344,6 @@ Odesláno automaticky z imersa.cz`;
                     />
                   </svg>
                 </motion.div>
-                {/* Pulsující kruh */}
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0.6 }}
                   animate={{ scale: 1.5, opacity: 0 }}
@@ -354,7 +391,6 @@ function useCountUp(target: number, duration = 500) {
     const start = performance.now();
     const tick = (now: number) => {
       const p = Math.min((now - start) / duration, 1);
-      // ease out cubic
       const eased = 1 - Math.pow(1 - p, 3);
       setDisplay(Math.round(from + (target - from) * eased));
       if (p < 1) raf.current = requestAnimationFrame(tick);
@@ -372,7 +408,7 @@ interface PricePanelProps {
   projectType: ProjectTypeId | null;
   total: number;
   totalRaw: number;
-  lines: { label: string; price: number }[];
+  lines: PriceLine[];
   setShowPoptavka: (v: boolean) => void;
   generatePDF: () => void;
 }
@@ -400,7 +436,9 @@ function PricePanel({ projectType, total, totalRaw, lines, setShowPoptavka, gene
           {lines.map(line => (
             <div key={line.label} className="flex items-center justify-between gap-3">
               <span className="text-[12px] text-white/55">{line.label}</span>
-              <span className="text-[12px] font-bold text-white/70 whitespace-nowrap">{formatPrice(line.price)}</span>
+              <span className="text-[12px] font-bold text-white/70 whitespace-nowrap">
+                {line.free ? 'Zdarma' : formatPrice(line.price)}
+              </span>
             </div>
           ))}
         </div>
@@ -456,9 +494,16 @@ export default function Calculator() {
   const [showPoptavka, setShowPoptavka] = useState(false);
   const [projectType, setProjectType] = useState<ProjectTypeId | null>(null);
 
-  const multiplier = PROJECT_TYPES.find(p => p.id === projectType)?.multiplier ?? 1;
-  const adjustedPrice = (base: number) =>
-    base === 0 ? 0 : Math.round((base * multiplier) / 500) * 500;
+  const typeIndex = projectType === 'small' ? 0 : projectType === 'medium' ? 1 : 2;
+
+  function getItemPrice(item: Item): number {
+    if (item.freeWithKonfigurator && radioValues.web === 'web_s') return 0;
+    return item.prices[typeIndex];
+  }
+
+  function isItemFree(item: Item): boolean {
+    return !!(item.freeWithKonfigurator && radioValues.web === 'web_s');
+  }
 
   function toggleCheck(id: string) {
     setChecked(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
@@ -468,28 +513,34 @@ export default function Calculator() {
     setRadioValues(prev => ({ ...prev, [sectionId]: prev[sectionId] === itemId ? '' : itemId }));
   }
 
-  function sectionCount(section: typeof SECTIONS[0]) {
+  function sectionCount(section: Section) {
     if (section.type === 'radio') return radioValues[section.id] ? 1 : 0;
     return section.items.filter(i => checked.has(i.id)).length;
   }
 
-  const totalRaw = SECTIONS.reduce((sum, section) => {
+  const totalRaw = projectType ? SECTIONS.reduce((sum, section) => {
     if (section.type === 'radio') {
       const sel = section.items.find(i => i.id === radioValues[section.id]);
-      return sum + adjustedPrice(sel?.price ?? 0);
+      return sum + (sel ? getItemPrice(sel) : 0);
     }
-    return sum + section.items.filter(i => checked.has(i.id)).reduce((s, i) => s + adjustedPrice(i.price), 0);
-  }, 0);
+    return sum + section.items.filter(i => checked.has(i.id)).reduce((s, i) => s + getItemPrice(i), 0);
+  }, 0) : 0;
 
   const total = useCountUp(totalRaw);
 
-  const lines = SECTIONS.flatMap(section => {
+  const lines: PriceLine[] = SECTIONS.flatMap(section => {
     if (section.type === 'radio') {
       const sel = section.items.find(i => i.id === radioValues[section.id]);
-      if (sel && sel.price > 0) return [{ label: sel.label, price: adjustedPrice(sel.price) }];
-      return [];
+      if (!sel || getItemPrice(sel) === 0) return [];
+      return [{ label: sel.label, price: getItemPrice(sel) }];
     }
-    return section.items.filter(i => checked.has(i.id)).map(i => ({ label: i.label, price: adjustedPrice(i.price) }));
+    return section.items
+      .filter(i => checked.has(i.id))
+      .map(i => ({
+        label: i.label,
+        price: getItemPrice(i),
+        free: isItemFree(i) || undefined,
+      }));
   });
 
   function generatePDF() {
@@ -502,9 +553,11 @@ export default function Calculator() {
     const selectedItems = SECTIONS.flatMap(section => {
       if (section.type === 'radio') {
         const sel = section.items.find(i => i.id === radioValues[section.id]);
-        return sel ? [{ section: section.title, ...sel }] : [];
+        return sel ? [{ section: section.title, ...sel, computedPrice: getItemPrice(sel), free: isItemFree(sel) }] : [];
       }
-      return section.items.filter(i => checked.has(i.id)).map(i => ({ section: section.title, ...i }));
+      return section.items.filter(i => checked.has(i.id)).map(i => ({
+        section: section.title, ...i, computedPrice: getItemPrice(i), free: isItemFree(i),
+      }));
     });
 
     const rows = selectedItems.map(item => `
@@ -515,7 +568,7 @@ export default function Calculator() {
           <div style="font-size:11px;color:#4A6741;font-weight:600;margin-top:4px;text-transform:uppercase;letter-spacing:.05em;">${item.section}</div>
         </td>
         <td style="padding:12px 16px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap;font-weight:700;color:#2D2D2D;vertical-align:top;">
-          ${item.price > 0 ? item.price.toLocaleString('cs-CZ') + ' Kč' : '—'}
+          ${item.free ? '<span style="color:#4A6741;">Zdarma</span>' : item.computedPrice > 0 ? item.computedPrice.toLocaleString('cs-CZ') + ' Kč' : '—'}
         </td>
       </tr>`).join('');
 
@@ -597,7 +650,7 @@ export default function Calculator() {
     <div class="project-type-badge" style="margin-top:16px;">
       <span class="pt-label">Typ projektu: ${projectTypeInfo.label}</span>
       <span style="color:#C8D8C4;">|</span>
-      <span class="pt-desc">${projectTypeInfo.description}</span>
+      <span class="pt-desc">${projectTypeInfo.units} — ${projectTypeInfo.description}</span>
     </div>` : ''}
   </div>
 
@@ -680,7 +733,6 @@ export default function Calculator() {
         }
       `}</style>
 
-      {/* Warm greige base + ambient blobs — wrapped in overflow-hidden so blobs don't spill outside section */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[#E0DDD3]" />
         <div className="absolute inset-0 pointer-events-none" style={{
@@ -699,7 +751,6 @@ export default function Calculator() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}
           className="max-w-2xl mb-14">
           <span className="inline-block text-[11px] font-bold uppercase tracking-[0.2em] text-forest mb-4">Orientační kalkulace</span>
@@ -713,7 +764,6 @@ export default function Calculator() {
 
         <div className="grid lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] gap-8 lg:gap-12 items-start">
 
-          {/* Left — Options */}
           <motion.div initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.1 }}
             className="space-y-5">
 
@@ -731,9 +781,11 @@ export default function Calculator() {
                   const isSelected = projectType === pt.id;
                   return (
                     <button key={pt.id} type="button" onClick={() => setProjectType(isSelected ? null : pt.id)}
-                      className={`flex flex-col items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-3 sm:py-4 rounded-xl border transition-all duration-200 ${isSelected ? 'bg-forest border-forest shadow-md shadow-forest/15' : 'bg-white border-anthracite/10 hover:border-forest/40 hover:shadow-sm'}`}>
+                      className={`relative flex flex-col items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-3 sm:py-4 rounded-xl border transition-all duration-200 ${isSelected ? 'bg-forest border-forest shadow-md shadow-forest/15' : 'bg-white border-anthracite/10 hover:border-forest/40 hover:shadow-sm'}`}>
+                      <span className={`absolute top-2 right-2 text-[9px] font-bold uppercase tracking-[0.12em] ${isSelected ? 'text-white' : 'text-forest'}`}>{pt.size}</span>
                       <div className={`w-10 h-8 sm:w-14 sm:h-12 ${isSelected ? 'text-white' : 'text-forest'}`}><pt.Svg /></div>
-                      <span className={`text-[12px] sm:text-[13px] font-semibold ${isSelected ? 'text-white' : 'text-anthracite'}`}>{pt.label}</span>
+                      <span className={`text-[12px] sm:text-[13px] font-semibold text-center leading-tight ${isSelected ? 'text-white' : 'text-anthracite'}`}>{pt.label}</span>
+                      <span className={`text-[10px] sm:text-[11px] font-medium ${isSelected ? 'text-white/70' : 'text-forest/70'}`}>{pt.units}</span>
                       <span className={`hidden sm:block text-[11px] text-center leading-tight ${isSelected ? 'text-white/65' : 'text-anthracite/40'}`}>{pt.description}</span>
                     </button>
                   );
@@ -749,20 +801,25 @@ export default function Calculator() {
                 <div className="grid sm:grid-cols-2 gap-3">
                   {section.items.map((item) => {
                     const isSelected = section.type === 'radio' ? radioValues[section.id] === item.id : checked.has(item.id);
+                    const free = isItemFree(item);
+                    const price = getItemPrice(item);
                     return (
                       <button key={item.id} type="button"
                         onClick={() => section.type === 'radio' ? setRadio(section.id, item.id) : toggleCheck(item.id)}
                         className={`group relative flex items-center gap-3 px-4 py-3.5 rounded-xl border text-left transition-all duration-200 ${isSelected
                           ? 'bg-gradient-to-br from-[#4d6e43] via-[#3d5a35] to-[#2c4626] border-[#4d6e43]/60 shadow-[0_6px_20px_rgba(74,103,65,0.28),inset_0_1px_0_rgba(255,255,255,0.10)] -translate-y-0.5'
                           : 'bg-white border-anthracite/10 hover:border-forest/40 hover:shadow-sm'}`}>
-                        {/* Left accent bar */}
                         {isSelected && <span className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-white/40 to-white/10" />}
                         <span className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${isSelected ? 'bg-white/15 border-white/50' : 'border-anthracite/20 group-hover:border-forest/50'}`}>
                           {isSelected && <Check size={10} strokeWidth={3} className="text-white" />}
                         </span>
                         <span className={`flex-1 text-[13px] font-semibold leading-snug ${isSelected ? 'text-white' : 'text-anthracite'}`}>{item.label}</span>
-                        {item.price > 0 && projectType && (
-                          <span className={`text-[11px] font-bold whitespace-nowrap ${isSelected ? 'text-white/65' : 'text-anthracite/35'}`}>{formatPrice(adjustedPrice(item.price))}</span>
+                        {projectType && (
+                          free
+                            ? <span className={`text-[11px] font-bold whitespace-nowrap ${isSelected ? 'text-white/75' : 'text-forest/60'}`}>Zdarma</span>
+                            : price > 0
+                              ? <span className={`text-[11px] font-bold whitespace-nowrap ${isSelected ? 'text-white/65' : 'text-anthracite/35'}`}>{formatPrice(price)}</span>
+                              : null
                         )}
                         <span className="flex-shrink-0 z-10" onClick={e => e.stopPropagation()}>
                           <Tooltip text={item.info} selected={isSelected} />
@@ -798,7 +855,6 @@ export default function Calculator() {
             })}
           </motion.div>
 
-          {/* Right — Price panel sticky (desktop only) */}
           <motion.div initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.25 }}
             className="hidden lg:block sticky top-24 self-start">
             <PricePanel

@@ -1,8 +1,8 @@
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { Mail, Phone, MapPin, ArrowRight, ExternalLink, Globe, CheckCircle2 } from 'lucide-react';
+import { Mail, Phone, ArrowRight, CheckCircle2 } from 'lucide-react';
 
-const PROJECT_TYPES = ['3D Konfigurátor', 'Vizualizace nemovitosti', 'Prezentační web', 'Jiné'];
+const PROJECT_TYPES = ['Komorní projekt', 'Rezidenční projekt', 'Developerský celek', 'Jiné'];
 
 function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactNode }) {
   return (
@@ -218,87 +218,41 @@ Odesláno automaticky z imersa.cz`;
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#111612] pt-16 pb-10">
+      <footer className="bg-[#111612] pt-14 pb-8">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-12">
-            {/* Brand */}
-            <div>
-              <a href="#" className="flex items-center mb-4">
-                <img
-                  src="/logo.svg"
-                  alt="imersa"
-                  className="h-7 w-auto object-contain"
-                  style={{ filter: 'brightness(0) invert(1)' }}
-                />
-              </a>
-              <p className="text-xs text-white/40 leading-relaxed mb-4">
-                Revoluční 3D konfigurátory pro realitní development a průmyslový design.
-              </p>
-              <div className="flex gap-2">
-                {[ExternalLink, Globe].map((Icon, i) => (
-                  <a
-                    key={i}
-                    href="#"
-                    className="w-8 h-8 rounded-lg bg-white/[0.05] flex items-center justify-center text-white/35 hover:text-white/70 hover:bg-white/[0.08] transition-all duration-200"
-                  >
-                    <Icon size={14} />
-                  </a>
-                ))}
-              </div>
-            </div>
 
-            {/* Nav */}
-            <div>
-              <h4 className="text-[11px] font-bold text-white/60 uppercase tracking-widest mb-4">Navigace</h4>
-              <ul className="space-y-2.5">
-                {['Case Study', 'Moduly a funkce', 'Integrace do CRM', 'Blog a trendy'].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-sm text-white/40 hover:text-white/80 transition-colors">{item}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Services */}
-            <div>
-              <h4 className="text-[11px] font-bold text-white/60 uppercase tracking-widest mb-4">Co děláme</h4>
-              <ul className="space-y-2.5">
-                {['3D Konfigurátory na míru', 'Kalkulačky splátek', 'Dynamické ceníky bytů', 'API napojení (Raynet, aj.)'].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-sm text-white/40 hover:text-white/80 transition-colors">{item}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Contact */}
-            <div>
-              <h4 className="text-[11px] font-bold text-white/60 uppercase tracking-widest mb-4">Kontakt</h4>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-2.5">
-                  <Mail size={14} className="text-forest shrink-0" />
-                  <a href="mailto:info@imersa.cz" className="text-sm text-white/40 hover:text-white/80 transition-colors">
-                    info@imersa.cz
-                  </a>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <Phone size={14} className="text-forest shrink-0" />
-                  <a href="tel:+420604445240" className="text-sm text-white/40 hover:text-white/80 transition-colors">
-                    +420 604 445 240
-                  </a>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <MapPin size={14} className="text-forest shrink-0" />
-                  <span className="text-sm text-greige/50">Kancelář v Praze</span>
-                </li>
-              </ul>
-            </div>
+          {/* Brand — full width */}
+          <div className="flex flex-col items-center text-center mb-10">
+            <a href="#" className="mb-5">
+              <img
+                src="/logo.svg"
+                alt="imersa"
+                className="h-9 w-auto object-contain"
+                style={{ filter: 'brightness(0) invert(1)' }}
+              />
+            </a>
+            <p className="text-sm text-white/35 leading-relaxed max-w-sm">
+              Revoluční 3D konfigurátory a prezentační weby<br className="hidden sm:block" /> pro realitní development.
+            </p>
           </div>
 
-          {/* Bottom */}
-          <div className="pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-3">
-            <p className="text-[11px] text-white/25">© {new Date().getFullYear()} Imersa (B2B Showcase). Všechna práva vyhrazena.</p>
-            <div className="flex gap-5">
+          {/* Bottom bar */}
+          <div className="pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-[11px] text-white/25 order-2 sm:order-1">© {new Date().getFullYear()} Imersa. Všechna práva vyhrazena.</p>
+
+            <div className="flex items-center gap-5 order-1 sm:order-2">
+              <a href="mailto:info@imersa.cz" className="flex items-center gap-1.5 text-[12px] text-white/40 hover:text-white/80 transition-colors">
+                <Mail size={12} className="text-forest" />
+                info@imersa.cz
+              </a>
+              <span className="text-white/15">|</span>
+              <a href="tel:+420604445240" className="flex items-center gap-1.5 text-[12px] text-white/40 hover:text-white/80 transition-colors">
+                <Phone size={12} className="text-forest" />
+                +420 604 445 240
+              </a>
+            </div>
+
+            <div className="flex gap-5 order-3">
               <a href="#" className="text-[11px] text-white/25 hover:text-greige/60 transition-colors">Ochrana osobních údajů</a>
               <a href="#" className="text-[11px] text-white/25 hover:text-greige/60 transition-colors">Obchodní podmínky</a>
             </div>

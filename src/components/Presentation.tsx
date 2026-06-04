@@ -156,14 +156,14 @@ export default function Presentation() {
           {FEATURES.map((f) => (
             <div
               key={f.title}
-              className="bg-[#171d15]/55 backdrop-blur-xl border border-white/[0.07] rounded-2xl p-5 flex gap-3"
+              className="group bg-[#171d15]/55 backdrop-blur-xl border border-white/[0.07] rounded-2xl p-5 flex gap-3 transition-all duration-500 ease-out hover:bg-[#1a2118]/80 hover:border-forest/25 hover:-translate-y-2 hover:shadow-[0_16px_40px_-4px_rgba(74,103,65,0.45)] cursor-pointer"
             >
-              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-forest/25 flex items-center justify-center mt-0.5">
-                <Check size={10} strokeWidth={3} className="text-forest" />
+              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-forest/25 flex items-center justify-center mt-0.5 transition-all duration-500 group-hover:bg-forest/60">
+                <Check size={10} strokeWidth={3} className="text-forest transition-all duration-500 group-hover:text-white" />
               </div>
               <div>
-                <h4 className="text-[12px] font-bold text-white mb-1 uppercase tracking-tight">{f.title}</h4>
-                <p className="text-[12px] text-white/50 leading-relaxed">{f.text}</p>
+                <h4 className="text-[12px] font-bold text-white mb-1 uppercase tracking-tight transition-all duration-500">{f.title}</h4>
+                <p className="text-[12px] text-white/50 leading-relaxed transition-all duration-500 group-hover:text-white/75">{f.text}</p>
               </div>
             </div>
           ))}
