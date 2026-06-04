@@ -76,7 +76,7 @@ export default function Presentation() {
                       <div className="absolute inset-0 cursor-pointer group" onClick={() => setIsDemoActive(true)}>
                         <img
                           src="/demofoto.png"
-                          alt="Gran Via Residence"
+                          alt="Gran Via Residence — ukázka interaktivního 3D konfigurátoru bytového projektu od Imersa"
                           className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
                         />
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-black/40 transition-colors duration-400 flex items-center justify-center">

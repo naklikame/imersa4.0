@@ -11,6 +11,66 @@ export default function ArticlePage() {
   useEffect(() => { window.scrollTo(0, 0); }, [slug]);
 
   useEffect(() => {
+    if (!article) return;
+    const defaultTitle = 'Imersa — 3D konfigurátory a prezentační weby pro realitní development';
+    const defaultDesc = 'Imersa vytváří interaktivní 3D konfigurátory, fotorealistické vizualizace a prezentační weby pro developerské projekty.';
+
+    const setMeta = (name: string, content: string, prop = false) => {
+      const attr = prop ? 'property' : 'name';
+      let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
+      if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
+      el.setAttribute('content', content);
+    };
+
+    const setCanonical = (url: string) => {
+      let el = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      if (!el) { el = document.createElement('link'); el.setAttribute('rel', 'canonical'); document.head.appendChild(el); }
+      el.setAttribute('href', url);
+    };
+
+    const articleTitle = `${article.title} — Imersa`;
+    const articleDesc = article.excerpt;
+    const articleUrl = `https://imersa.cz/blog/${article.slug}`;
+
+    document.title = articleTitle;
+    setMeta('description', articleDesc);
+    setMeta('og:title', articleTitle, true);
+    setMeta('og:description', articleDesc, true);
+    setMeta('og:url', articleUrl, true);
+    setMeta('og:type', 'article', true);
+    if (article.image) setMeta('og:image', `https://imersa.cz${article.image}`, true);
+    setCanonical(articleUrl);
+
+    const schema = document.createElement('script');
+    schema.type = 'application/ld+json';
+    schema.id = 'article-schema';
+    schema.text = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: article.title,
+      description: article.excerpt,
+      image: article.image ? `https://imersa.cz${article.image}` : undefined,
+      datePublished: article.date,
+      author: { '@type': 'Organization', name: 'Imersa', url: 'https://imersa.cz' },
+      publisher: { '@type': 'Organization', name: 'Imersa', logo: { '@type': 'ImageObject', url: 'https://imersa.cz/logo.svg' } },
+      mainEntityOfPage: { '@type': 'WebPage', '@id': articleUrl },
+    });
+    document.head.appendChild(schema);
+
+    return () => {
+      document.title = defaultTitle;
+      setMeta('description', defaultDesc);
+      setMeta('og:title', defaultTitle, true);
+      setMeta('og:description', defaultDesc, true);
+      setMeta('og:url', 'https://imersa.cz/', true);
+      setMeta('og:type', 'website', true);
+      setMeta('og:image', 'https://imersa.cz/imersa.png', true);
+      setCanonical('https://imersa.cz/');
+      document.getElementById('article-schema')?.remove();
+    };
+  }, [article]);
+
+  useEffect(() => {
     const onScroll = () => {
       const doc = document.documentElement;
       const scrollable = doc.scrollHeight - doc.clientHeight;

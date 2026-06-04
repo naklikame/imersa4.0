@@ -13,6 +13,40 @@ export default function BlogPage() {
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
+  useEffect(() => {
+    const defaultTitle = 'Imersa — 3D konfigurátory a prezentační weby pro realitní development';
+    const defaultDesc = 'Imersa vytváří interaktivní 3D konfigurátory, fotorealistické vizualizace a prezentační weby pro developerské projekty.';
+
+    const setMeta = (name: string, content: string, prop = false) => {
+      const attr = prop ? 'property' : 'name';
+      let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
+      if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
+      el.setAttribute('content', content);
+    };
+
+    const setCanonical = (url: string) => {
+      let el = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      if (!el) { el = document.createElement('link'); el.setAttribute('rel', 'canonical'); document.head.appendChild(el); }
+      el.setAttribute('href', url);
+    };
+
+    document.title = 'Blog pro developery — tipy, trendy a případové studie | Imersa';
+    setMeta('description', 'Magazín Imersa pro realitní developery — tipy na digitální prezentaci projektů, trendy v prodeji nemovitostí a případové studie.');
+    setMeta('og:title', 'Blog pro developery — tipy, trendy a případové studie | Imersa', true);
+    setMeta('og:description', 'Magazín Imersa pro realitní developery — tipy na digitální prezentaci projektů, trendy v prodeji nemovitostí a případové studie.', true);
+    setMeta('og:url', 'https://imersa.cz/blog', true);
+    setCanonical('https://imersa.cz/blog');
+
+    return () => {
+      document.title = defaultTitle;
+      setMeta('description', defaultDesc);
+      setMeta('og:title', defaultTitle, true);
+      setMeta('og:description', defaultDesc, true);
+      setMeta('og:url', 'https://imersa.cz/', true);
+      setCanonical('https://imersa.cz/');
+    };
+  }, []);
+
   // Reset interval whenever active changes (handles both auto-advance & dot click)
   useEffect(() => {
     const t = setInterval(() => setActive(i => (i + 1) % featured.length), INTERVAL_MS);
