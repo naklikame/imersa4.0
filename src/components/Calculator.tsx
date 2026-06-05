@@ -117,18 +117,43 @@ const PROJECT_TYPES: { id: ProjectTypeId; label: string; units: string; size: st
 
 /* ─── Tooltip ───────────────────────────────────────────────────────── */
 
+type TooltipPlacement = 'right' | 'left' | 'bottom';
+interface TooltipPos { top: number; left: number; placement: TooltipPlacement }
+
+function computeTooltipPos(r: DOMRect): TooltipPos {
+  const W = 208; // w-52
+  const H = 96;
+  const GAP = 8;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const clampTop = (t: number) => Math.max(GAP, Math.min(t, vh - H - GAP));
+
+  if (r.right + GAP + W <= vw)
+    return { top: clampTop(r.top + r.height / 2), left: r.right + GAP, placement: 'right' };
+  if (r.left - GAP - W >= 0)
+    return { top: clampTop(r.top + r.height / 2), left: r.left - GAP - W, placement: 'left' };
+  return {
+    top: r.bottom + GAP,
+    left: Math.max(GAP, Math.min(r.left + r.width / 2 - W / 2, vw - W - GAP)),
+    placement: 'bottom',
+  };
+}
+
 function Tooltip({ text, selected = false }: { text: string; selected?: boolean }) {
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
-  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const [pos, setPos] = useState<TooltipPos>({ top: 0, left: 0, placement: 'right' });
 
   function handleOpen() {
-    if (btnRef.current) {
-      const r = btnRef.current.getBoundingClientRect();
-      setPos({ top: r.top + r.height / 2, left: r.right + 8 });
-    }
+    if (btnRef.current) setPos(computeTooltipPos(btnRef.current.getBoundingClientRect()));
     setOpen(true);
   }
+
+  const arrow = {
+    right:  'absolute left-[-5px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-t-transparent border-b-transparent border-r-anthracite',
+    left:   'absolute right-[-5px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-4 border-t-transparent border-b-transparent border-l-anthracite',
+    bottom: 'absolute top-[-5px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-anthracite',
+  };
 
   return (
     <span className="inline-flex items-center">
@@ -136,19 +161,27 @@ function Tooltip({ text, selected = false }: { text: string; selected?: boolean 
         ref={btnRef}
         onMouseEnter={handleOpen} onMouseLeave={() => setOpen(false)}
         onFocus={handleOpen} onBlur={() => setOpen(false)}
+        onClick={(e) => { e.stopPropagation(); open ? setOpen(false) : handleOpen(); }}
         className={`transition-colors duration-200 focus:outline-none ${selected ? 'text-white/70 hover:text-white' : 'text-anthracite/30 hover:text-forest'}`}
         aria-label="Více informací" type="button"
       >
         <Info size={13} strokeWidth={2} />
       </button>
       {open && createPortal(
-        <span
-          style={{ position: 'fixed', top: pos.top, left: pos.left, transform: 'translateY(-50%)', zIndex: 9999 }}
-          className="w-56 bg-anthracite text-greige text-[12px] leading-relaxed rounded-xl px-3 py-2.5 shadow-xl pointer-events-none"
-        >
-          {text}
-          <span className="absolute left-[-5px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-t-transparent border-b-transparent border-r-anthracite" />
-        </span>,
+        <>
+          <span className="fixed inset-0 z-[9998]" onClick={() => setOpen(false)} />
+          <span
+            style={{
+              position: 'fixed', zIndex: 9999,
+              top: pos.top, left: pos.left,
+              transform: pos.placement !== 'bottom' ? 'translateY(-50%)' : 'none',
+            }}
+            className="w-52 bg-anthracite text-greige text-[12px] leading-relaxed rounded-xl px-3 py-2.5 shadow-xl pointer-events-none"
+          >
+            {text}
+            <span className={arrow[pos.placement]} />
+          </span>
+        </>,
         document.body
       )}
     </span>
