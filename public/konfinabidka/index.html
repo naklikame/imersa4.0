@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Imersa | Proposal Configurator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              greige: '#E5E2DB',
+              sage: '#4A6741',
+              anthracite: '#2D2D2D',
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              display: ['Syne', 'system-ui', 'sans-serif'],
+            },
+            boxShadow: {
+              'sage': '0 8px 24px rgba(74, 103, 65, 0.15)',
+              'sage-strong': '0 12px 32px rgba(74, 103, 65, 0.39)',
+              'glass': '0 4px 30px rgba(0, 0, 0, 0.05)',
+            },
+            borderRadius: {
+              '4xl': '2rem', // 32px for large containers
+            },
+            letterSpacing: {
+              'tighter': '-0.04em',
+              'tightest': '-0.06em',
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+      /* Custom print styles to ensure background colors and exact sizing */
+      @media print {
+        @page { margin: 0; size: A4; }
+        html, body { 
+          -webkit-print-color-adjust: exact !important; 
+          print-color-adjust: exact !important; 
+          background-color: #E5E2DB !important;
+          height: auto !important;
+          overflow: visible !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        
+        /* Ensure the root and app containers don't restrict height */
+        #root, #root > div {
+          display: block !important;
+          height: auto !important;
+          overflow: visible !important;
+        }
+
+        /* Reset the printable document to flow naturally for pagination */
+        #printable-document {
+          width: 210mm !important;
+          min-height: 297mm !important;
+          margin: 0 auto !important;
+          box-shadow: none !important;
+          position: relative !important;
+        }
+        
+        /* Utility to prevent awkward page breaks inside elements */
+        .break-inside-avoid {
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+      }
+    </style>
+        <script type="module" crossorigin src="/konfinabidka/assets/index-BdRQtJpF.js"></script>
+      </head>
+  <body class="bg-greige text-anthracite font-sans antialiased selection:bg-sage/30">
+    <div id="root"></div></body>
+</html>

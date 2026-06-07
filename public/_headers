@@ -7,3 +7,9 @@
 
 /emailcontent
   X-Robots-Tag: noindex, nofollow
+
+/konfinabidka
+  X-Robots-Tag: noindex, nofollow
+
+/konfinabidka/*
+  X-Robots-Tag: noindex, nofollow

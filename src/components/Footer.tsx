@@ -1,5 +1,6 @@
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Mail, Phone, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 const PROJECT_TYPES = ['Komorní projekt', 'Rezidenční projekt', 'Developerský celek', 'Jiné'];
@@ -252,9 +253,16 @@ Odesláno automaticky z imersa.cz`;
               </a>
             </div>
 
-            <div className="flex gap-5 order-3">
-              <a href="#" className="text-[11px] text-white/25 hover:text-greige/60 transition-colors">Ochrana osobních údajů</a>
-              <a href="#" className="text-[11px] text-white/25 hover:text-greige/60 transition-colors">Obchodní podmínky</a>
+            <div className="flex flex-wrap justify-center sm:justify-end gap-x-5 gap-y-1.5 order-3">
+              <Link to="/privacy" className="text-[11px] text-white/25 hover:text-greige/60 transition-colors">Ochrana osobních údajů</Link>
+              <Link to="/cookies" className="text-[11px] text-white/25 hover:text-greige/60 transition-colors">Zásady cookies</Link>
+              <Link to="/impressum" className="text-[11px] text-white/25 hover:text-greige/60 transition-colors">Impressum</Link>
+              <button
+                onClick={() => window.dispatchEvent(new Event('openCookieSettings'))}
+                className="text-[11px] text-white/25 hover:text-greige/60 transition-colors cursor-pointer"
+              >
+                Upravit nastavení cookies
+              </button>
             </div>
           </div>
         </div>

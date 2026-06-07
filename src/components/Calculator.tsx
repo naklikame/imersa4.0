@@ -141,7 +141,7 @@ function computeTooltipPos(r: DOMRect): TooltipPos {
 
 function Tooltip({ text, selected = false }: { text: string; selected?: boolean }) {
   const [open, setOpen] = useState(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const btnRef = useRef<HTMLSpanElement>(null);
   const [pos, setPos] = useState<TooltipPos>({ top: 0, left: 0, placement: 'right' });
 
   function handleOpen() {
@@ -157,16 +157,19 @@ function Tooltip({ text, selected = false }: { text: string; selected?: boolean 
 
   return (
     <span className="inline-flex items-center">
-      <button
+      <span
         ref={btnRef}
+        role="button"
+        tabIndex={0}
         onMouseEnter={handleOpen} onMouseLeave={() => setOpen(false)}
         onFocus={handleOpen} onBlur={() => setOpen(false)}
         onClick={(e) => { e.stopPropagation(); open ? setOpen(false) : handleOpen(); }}
-        className={`transition-colors duration-200 focus:outline-none ${selected ? 'text-white/70 hover:text-white' : 'text-anthracite/30 hover:text-forest'}`}
-        aria-label="Více informací" type="button"
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); open ? setOpen(false) : handleOpen(); } }}
+        className={`cursor-pointer transition-colors duration-200 focus:outline-none ${selected ? 'text-white/70 hover:text-white' : 'text-anthracite/30 hover:text-forest'}`}
+        aria-label="Více informací"
       >
         <Info size={13} strokeWidth={2} />
-      </button>
+      </span>
       {open && createPortal(
         <>
           <span className="fixed inset-0 z-[9998]" onClick={() => setOpen(false)} />
