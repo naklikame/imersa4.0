@@ -198,39 +198,39 @@ export default function BlogPage() {
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-forest mb-8">Všechny články</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {articles.map((a) => (
-                <Link
-                  key={a.slug}
-                  to={`/blog/${a.slug}`}
-                  className="group rounded-2xl overflow-hidden bg-white border border-anthracite/[0.06] hover:shadow-xl hover:shadow-anthracite/[0.08] transition-all duration-300 hover:-translate-y-1 flex flex-col"
-                >
-                  <div className="relative aspect-[16/9] overflow-hidden flex-none">
-                    <img src={a.image} alt={a.title} loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-anthracite/25 to-transparent" />
-                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-white/90 backdrop-blur-sm text-[11px] font-bold text-forest">
-                      {a.category}
-                    </span>
+              <Link
+                key={a.slug}
+                to={`/blog/${a.slug}`}
+                className="group rounded-2xl overflow-hidden bg-white border border-anthracite/[0.06] hover:shadow-xl hover:shadow-anthracite/[0.08] transition-all duration-300 hover:-translate-y-1 flex flex-col"
+              >
+                <div className="relative aspect-[16/9] overflow-hidden flex-none">
+                  <img src={a.image} alt={a.title} loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-anthracite/25 to-transparent" />
+                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-white/90 backdrop-blur-sm text-[11px] font-bold text-forest">
+                    {a.category}
+                  </span>
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex items-center gap-2 text-[11px] text-anthracite/40 mb-3">
+                    <span className="flex items-center gap-1.5"><Calendar size={11} />{a.date}</span>
+                    <span className="w-1 h-1 rounded-full bg-anthracite/20" />
+                    <span className="flex items-center gap-1.5"><Clock size={11} />{a.readTime}</span>
                   </div>
-                  <div className="p-6 flex flex-col flex-1">
-                    <div className="flex items-center gap-2 text-[11px] text-anthracite/40 mb-3">
-                      <span className="flex items-center gap-1.5"><Calendar size={11} />{a.date}</span>
-                      <span className="w-1 h-1 rounded-full bg-anthracite/20" />
-                      <span className="flex items-center gap-1.5"><Clock size={11} />{a.readTime}</span>
-                    </div>
-                    <h3 className="text-[17px] font-display font-bold text-anthracite mb-2 leading-snug group-hover:text-forest transition-colors duration-300 flex-1">
-                      {a.title}
-                    </h3>
-                    <p className="text-[13px] text-anthracite/55 leading-relaxed mb-5 line-clamp-2">{a.excerpt}</p>
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-forest">
-                      Číst dále
-                      <ArrowRight size={12} className="transition-transform duration-300 group-hover:translate-x-0.5" />
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                  <h3 className="text-[17px] font-display font-bold text-anthracite mb-2 leading-snug group-hover:text-forest transition-colors duration-300 flex-1">
+                    {a.title}
+                  </h3>
+                  <p className="text-[13px] text-anthracite/55 leading-relaxed mb-5 line-clamp-2">{a.excerpt}</p>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-forest">
+                    Číst dále
+                    <ArrowRight size={12} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
-        </main>
+        </div>
+      </main>
 
       <footer className="bg-[#f5f3ee] border-t border-anthracite/[0.06] py-8 text-center">
         <p className="text-[12px] text-anthracite/30">© {new Date().getFullYear()} Imersa · Všechna práva vyhrazena</p>

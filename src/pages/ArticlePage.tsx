@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { ArrowLeft, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Calendar, Clock } from 'lucide-react';
 import { articles } from '../data/articles';
 
 export default function ArticlePage() {
@@ -119,7 +119,7 @@ export default function ArticlePage() {
       </header>
 
       {/* Hero — full-bleed image with title overlay */}
-      <div className="relative h-[48vh] lg:h-[58vh] overflow-hidden">
+      <div className="relative h-[65vh] lg:h-[75vh] overflow-hidden">
         <img
           src={article.image}
           alt={article.title}
@@ -146,32 +146,98 @@ export default function ArticlePage() {
       </div>
 
       {/* Article body */}
-      <main className="max-w-[680px] mx-auto px-6 py-12 lg:py-16">
+      <main className="max-w-[780px] mx-auto px-6 py-12 lg:py-16">
 
         {/* Lead */}
-        <p className="text-[17px] sm:text-[18px] text-anthracite/80 leading-[1.75] mb-12 font-medium">
+        <p className="text-[17px] sm:text-[19px] text-anthracite/80 leading-[1.75] mb-12 font-medium border-l-[3px] border-forest pl-5">
           {article.content.lead}
         </p>
 
         {/* Sections */}
-        <div className="space-y-10">
-          {article.content.sections.map((section) => (
-            <div key={section.heading} className="group">
-              <div className="flex items-center gap-2.5 mb-3">
-                <span className="w-4 h-[2px] rounded-full bg-forest flex-none" />
-                <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-forest">
-                  {section.heading}
-                </h2>
+        <div className="divide-y divide-anthracite/[0.07]">
+          {article.content.sections.map((section, index) => {
+            const isConclusion = section.heading.toLowerCase().startsWith('závěr');
+
+            if (isConclusion) {
+              return (
+                <div key={section.heading} className="pt-10 pb-2">
+                  <div className="bg-[#2C3B2A] rounded-2xl px-7 py-8 sm:px-10 sm:py-10">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-forest/70 block mb-3">
+                      {section.heading}
+                    </span>
+                    <p className="text-[15px] sm:text-[16px] text-white/80 leading-[1.9]">
+                      {section.body}
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div key={section.heading} className="py-10">
+                <div className="flex items-baseline gap-4 mb-4">
+                  <span className="text-[11px] font-bold text-forest/40 tabular-nums flex-none w-5">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <h2 className="text-[19px] sm:text-[21px] font-display font-bold text-anthracite leading-snug">
+                    {section.heading}
+                  </h2>
+                </div>
+                <p className="text-[15px] sm:text-[16px] text-anthracite/70 leading-[1.9]">
+                  {section.body}
+                </p>
               </div>
-              <p className="text-[15px] text-anthracite/65 leading-[1.85]">
-                {section.body}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
+        {/* CTA */}
+        <div className="mt-12 bg-[#2C3B2A] rounded-2xl px-7 py-9 sm:px-10 text-center">
+          <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-forest/70 block mb-3">Imersa</span>
+          <h3 className="text-[20px] sm:text-[23px] font-display font-extrabold text-white mb-3 leading-snug">
+            Zajímá vás konfigurátor pro váš projekt?
+          </h3>
+          <p className="text-[13px] text-white/50 leading-relaxed mb-6 max-w-xs mx-auto">
+            Konzultace je zdarma a nezávazná. Ozveme se do 24 hodin.
+          </p>
+          <a
+            href="/#cenik"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white text-[#2C3B2A] text-[12px] font-bold uppercase tracking-[0.12em] hover:bg-greige transition-all duration-200"
+          >
+            Spočítat projekt
+            <ArrowUpRight size={14} />
+          </a>
+        </div>
+
+        {/* Related articles */}
+        {(() => {
+          const related = articles.filter(a => a.slug !== slug).slice(0, 2);
+          if (related.length === 0) return null;
+          return (
+            <div className="mt-12">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-anthracite/35 mb-5">Další články</p>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {related.map(a => (
+                  <Link key={a.slug} to={`/blog/${a.slug}`}
+                    className="group flex gap-4 p-4 rounded-xl bg-white border border-anthracite/[0.07] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                  >
+                    <div className="relative w-20 h-[52px] rounded-lg overflow-hidden flex-none">
+                      <img src={a.image} alt={a.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    </div>
+                    <div className="min-w-0 flex flex-col justify-center gap-1">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-forest">{a.category}</span>
+                      <h4 className="text-[13px] font-semibold text-anthracite leading-snug group-hover:text-forest transition-colors line-clamp-2">{a.title}</h4>
+                    </div>
+                    <ArrowRight size={14} className="flex-none text-anthracite/20 group-hover:text-forest self-center transition-colors ml-auto" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Back link */}
-        <div className="mt-16 pt-8 border-t border-anthracite/[0.08] flex items-center justify-between">
+        <div className="mt-10 pt-8 border-t border-anthracite/[0.08] flex items-center justify-between">
           <Link
             to="/blog"
             className="group inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-anthracite/20 text-[13px] font-semibold text-anthracite/55 hover:border-anthracite/50 hover:text-anthracite transition-all duration-200"

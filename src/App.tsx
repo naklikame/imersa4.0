@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -17,6 +17,16 @@ const CookiesPage = lazy(() => import('./pages/CookiesPage'));
 const ImpressumPage = lazy(() => import('./pages/ImpressumPage'));
 
 function HomePage() {
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash) return;
+    const id = hash.slice(1);
+    const timer = setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen w-full max-w-[100vw] [overflow-x:clip] relative">
       <Navbar />

@@ -5,7 +5,7 @@ import { Briefcase, CreditCard, Phone, FileText } from 'lucide-react';
 const navLinks = [
   { label: 'Case study', href: '#presentation' },
   { label: 'Ceník', href: '#cenik' },
-  { label: 'Blog', href: '#blog' },
+  { label: 'Blog', href: '/blog' },
   { label: 'Kontakt', href: '#contact' },
 ];
 
@@ -107,7 +107,7 @@ export default function Navbar() {
           {[
             { href: '#presentation', icon: Briefcase, label: 'Case' },
             { href: '#cenik', icon: CreditCard, label: 'Ceník' },
-            { href: '#blog', icon: FileText, label: 'Blog' },
+            { href: '/blog', icon: FileText, label: 'Blog' },
           ].map(({ href, icon: Icon, label }) => {
             const isActive = activeSection === href.replace('#', '');
             return (

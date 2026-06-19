@@ -16,6 +16,86 @@ export type Article = {
 
 export const articles: Article[] = [
   {
+    slug: 'cnb-zvyseni-sazeb-developer',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80',
+    category: 'Trh',
+    date: '19. června 2026',
+    title: 'Konec levných peněz: ČNB zvyšuje sazby na 3,75 %. Jak ochránit prodeje developerských projektů?',
+    excerpt: 'Česká národní banka poprvé po čtyřech letech zvyšuje sazby. Průměrné hypotéky překonaly 5,3 %. Co to znamená pro prodej developerských projektů a jak obstát.',
+    readTime: '5 min čtení',
+    content: {
+      lead: 'Česká národní banka mění po čtyřech letech kurz. Růst základní úrokové sazby spouští řetězovou reakci, která prodražuje hypotéky na maxima za poslední rok a půl. Trh s novostavbami čeká zkouška ohněm. Zákazníci budou pečlivěji vybírat a proces rozhodování se protáhne. Vítězi se stanou ti developeři, kteří dokážou budoucím majitelům nabídnout absolutní jistotu díky prémiovým webovým prezentacím a interaktivním 3D situacím.',
+      sections: [
+        {
+          heading: 'ČNB šlápla na brzdu. Co stojí za zdražením úvěrů?',
+          body: 'Bankovní rada pod vedením guvernéra Aleše Michla rozhodla na červnovém jednání o prvním zvýšení sazeb od června 2022 — pro hlasovalo šest ze sedmi členů rady. Primárním důvodem jsou přetrvávající inflační tlaky napříč ekonomikou. Klíčové změny jsou tři: dvoutýdenní repo sazba vzrostla o 0,25 procentního bodu na 3,75 %, lombardní sazba (za kolik si komerční banky půjčují od centrální banky) nově činí 4,75 % a diskontní sazba (od které se odvíjí úročení vkladů bank) byla zvýšena na 2,75 %.',
+        },
+        {
+          heading: 'Hypotéky na maximech: úrokové swapy prodražují bydlení',
+          body: 'Reakce hypotečního trhu na sebe nenechala dlouho čekat. Podle aktuálních dat Swiss Life Hypoindexu vystoupala průměrná nabídková sazba na začátku června na 5,3 % — růst o 11 bazických bodů. Hypotéky se drží nad pětiprocentní hranicí už třetí měsíc a jsou nejdražší za posledního půldruhého roku. Jak upozorňuje Evžen Korec ze společnosti Ekospol, za zdražováním nestojí jen ČNB — klíčový je vývoj ceny peněz na mezibankovním trhu a rostoucí sazby úrokových swapů s delší splatností. Pro developery z toho plynou dvě překážky: úbytek kupní síly (polovina kupujících novostaveb spoléhá na hypotéku) a syndrom opatrného klienta — zákazník upisující se k drahému úvěru neakceptuje kompromisy a před podpisem rezervační smlouvy vyžaduje stoprocentní transparentnost.',
+        },
+        {
+          heading: 'Interaktivní 3D situace eliminují obavy',
+          body: 'Pokud si kupující nedokáže představit, jak přesně bude komplex zasazen do okolní zástavby, klesá jeho důvěra. Interaktivní 3D model mu umožní libovolně rotovat celým projektem, sledovat simulaci reálného oslunění v průběhu dne a prohlížet vnitroblok. Možnost vizuálně zakliknout konkrétní bytovou jednotku přímo ze 3D pohledu z ptačí perspektivy vytváří mnohem silnější emoční vazbu než scrollování suchou tabulkou — a obavy z koupě z papíru mizí.',
+        },
+        {
+          heading: 'Bleskurychlé weby, které neztrácejí klienty',
+          body: 'Pomalé načítání velkých vizualizací nebo zasekávající se výběr bytů kupující spolehlivě odradí. Tradiční šablonovité systémy pro prémiové developerské projekty nestačí. Tajemstvím hladkého běhu jsou na míru kódované statické weby využívající moderní JAMstack architekturu, nasazené na špičkovém hostingu. Okamžité načtení interaktivních konfigurátorů s nulovou prodlevou přesvědčuje zákazníka podvědomě i o vysoké kvalitě samotné stavby.',
+        },
+        {
+          heading: 'Virtuální prohlídky prodávají z papíru',
+          body: 'Procházka bytem, ve kterém ještě nejsou ani vylité podlahy, představuje ultimátní prodejní argument. Klient získá dokonalou představu o velikosti místností, rozložení nábytku a výhledech z oken, čímž zcela odpadají pochybnosti o dispozičním řešení. V době drahých hypoték, kdy každý kupující analyzuje svoji investici pod lupou, je tato možnost přímou odpovědí na jeho nejhlubší pochybnosti.',
+        },
+        {
+          heading: 'Závěr',
+          body: 'Dražší peníze trh zchladí, ale nezastaví ho. Lidé budou kvalitní bydlení hledat dál. Prodejní úspěch v době drahých hypoték ale vyžaduje od developera krok navíc — profesionální digitální prezentaci, která prodává emoce, jistotu a luxus na první kliknutí. Developeři, kteří dnes investují do prémiové online prezentace, nejen přežijí ochlazení trhu — využijí ho jako příležitost odtrhnout se od konkurence.',
+        },
+      ],
+    },
+  },
+  {
+    slug: 'konfigurator-vs-showroom',
+    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=900&q=80',
+    category: 'Analýza',
+    date: '19. června 2026',
+    title: '3D konfigurátor vs. fyzický showroom: co se víc vyplatí?',
+    excerpt: 'Fyzický showroom stojí miliony a slouží jen do kolaudace. 3D konfigurátor funguje 24/7 ještě před zahájením stavby. Srovnáváme konkrétní čísla.',
+    readTime: '7 min čtení',
+    content: {
+      lead: 'Fyzický showroom byl dlouho standardem realitního marketingu. Jenže budovat ho stojí miliony, trvá měsíce a slouží jen do kolaudace. 3D konfigurátor funguje 24/7 ještě před zahájením stavby. Podíváme se na konkrétní čísla.',
+      sections: [
+        {
+          heading: 'Co vlastně srovnáváme?',
+          body: 'Fyzický showroom je vzorový byt nebo prodejní centrum postavené (nebo pronajmuté) speciálně proto, aby si kupující mohl projekt „osahat". Výhoda je jasná — fyzický zážitek je přesvědčivý. Nevýhoda taky: showroom existuje jen na jednom místě, v jednu chvíli ho navštíví jeden zájemce, a po předání klíčů přestane mít smysl. 3D konfigurátor je interaktivní webová aplikace, ve které si kupující sám projde celou budovu — patro po patře, byt po bytu. Vidí aktuální dostupnost, navolí si dispozici, zkontroluje výhled z okna, spočítá si měsíční splátku. A to všechno z pohovky, v neděli večer, bez nutnosti domlouvat si schůzku.',
+        },
+        {
+          heading: 'Porovnání nákladů',
+          body: 'Tady bývá největší překvapení. Fyzický showroom pro rezidenční projekt středního rozsahu zahrnuje pronájem nebo stavbu prostoru (300 000 – 1 500 000 Kč), interiérové vybavení a staging (200 000 – 800 000 Kč), provoz, recepci a energie po celou dobu prodeje (50 000 – 150 000 Kč měsíčně) a závěrečnou demontáž (50 000 – 200 000 Kč). Celkem klidně 2–4 miliony Kč na 18–36 měsíců prodeje. 3D konfigurátor s prezentačním webem je jednorázová investice, která funguje od prvního dne prodeje až do posledního prodaného bytu — typicky zlomek nákladů showroomu, bez měsíčních provozních výdajů. A zatímco showroom dokáže obsloužit jednotky zájemců denně, konfigurátor nemá kapacitní strop: stovky lidí si ho projdou paralelně, v noci, o víkendu, ze zahraničí.',
+        },
+        {
+          heading: 'Kde showroom stále vyhrává',
+          body: 'Bylo by nefér showroom jen shazovat. Existují situace, kde fyzická přítomnost rozhoduje. Prémiový segment — u bytů nad 15 milionů Kč kupující očekávají osobní přístup; fyzické setkání je součástí zážitku, ne jen prostředek k přenosu informací. Specifické materiály a povrchy — barvu kamene nebo strukturu dřeva se v 3D nikdy zcela věrně reprodukovat nepodaří, vzorek v ruce stále funguje lépe. A závěrečná fáze prodeje — konfigurátor přivede zájemce ke schůzce, ale tu poslední, kde se podepíše smlouva, stejně většina developerů dělá osobně.',
+        },
+        {
+          heading: 'Kde konfigurátor showroom jasně překonává',
+          body: 'Prodej off-plan — showroom k rozestavěné budově zkrátka přesvědčivě nejde postavit. Konfigurátor zobrazuje přesně to, co bude, na základě projektové dokumentace s aktuálními dostupnostmi. Geografický dosah — developerský projekt v Brně může oslovit kupce z Prahy, Bratislavy nebo Vídně; kupující ze zahraničí si dnes běžně pořídí nemovitost, aniž by ji fyzicky navštívili, ale jen pokud mají dostatečně přesvědčivou online prezentaci. Noční a víkendové prohlídky — data z realitních portálů konzistentně ukazují, že největší špička v prohlížení nemovitostí je ve večerních hodinách a o víkendu, kdy je showroom zavřený. A konečně analytika — víte, kdo strávil 12 minut prohlížením konkrétního bytu v 5. patře a třikrát si spočítal splátku? Konfigurátor ano. Váš obchodní tým pak volá lidem, kteří o váš projekt skutečně stojí.',
+        },
+        {
+          heading: 'Nejčastější námitka: „Naši zákazníci potřebují fyzický zážitek"',
+          body: 'Je to pravda — ale jen zčásti, a jen v určité fázi rozhodování. Kupující dnes prochází desítky projektů online ještě předtím, než si domluví první schůzku. Ta fáze prvního výběru — kdy se rozhoduje, které projekty vůbec stojí za bližší zájem — probíhá na internetu, ne v showroomu. Pokud váš projekt v téhle fázi nezaujme, protože má jen statické renderingy a PDF prospekt, nepřijdou ani na fyzickou prohlídku. Konfigurátor funguje jako předfiltr i jako přesvědčovací nástroj zároveň. Fyzická schůzka pak přichází ve chvíli, kdy je zákazník z velké části rozhodnutý — a vaším obchodníkům zbývá ho jen potvrdit v tom rozhodnutí.',
+        },
+        {
+          heading: 'Čísla z reálných projektů',
+          body: 'Projekty s interaktivním 3D konfigurátorem běžně vykazují 2–3× vyšší čas strávený na webu oproti standardním prezentačním webům a výrazně vyšší podíl kvalifikovaných poptávek — zájemci přicházejí na schůzku informovaní, s konkrétními preferencemi. Prodejní cyklus se zkracuje: méně schůzek potřebných k podpisu smlouvy. A klíčové: možnost prodávat dříve, ještě v době, kdy fyzicky není co ukázat.',
+        },
+        {
+          heading: 'Závěr: není to buď/nebo',
+          body: 'Showroom a 3D konfigurátor nejsou konkurenti — jsou to různé nástroje pro různé fáze prodeje. Konfigurátor obslouží prvních 80 % rozhodovacího procesu online, přivede k vám připraveného kupce a poskytne vám analytická data o jeho preferencích. Fyzická schůzka pak uzavře deal. Klíčová otázka pro každého developera ale zní: Kolik projektů vám propadlo přes prsty jen proto, že váš konkurent měl lepší online prezentaci?',
+        },
+      ],
+    },
+  },
+  {
     slug: '5-chyb-developeri-prodej-off-plan',
     image: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=900&q=80',
     category: 'Návod',
@@ -45,36 +125,6 @@ export const articles: Article[] = [
         {
           heading: 'Chyba č. 5: Žádná možnost self-service pro zákazníka',
           body: 'Tradiční model vyžaduje, aby zákazník prošel obchodníkem při každém kroku — chce vidět konkrétní byt, musí zavolat. Chce zjistit splátku, musí čekat na e-mail. Toto tření přímo koreluje s délkou prodejního cyklu. Zákazníci, kteří si mohou sami projít dostupné jednotky, filtrovat podle dispozice a okamžitě vidět orientační splátku, přicházejí na schůzku rozhodnutí — ne zvědaví. Prodejní cyklus se zkracuje průměrně o 40 %.',
-        },
-      ],
-    },
-  },
-  {
-    slug: 'zvyseni-prodeje-25-procent',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=80',
-    category: 'Case Study',
-    date: '15. května 2026',
-    title: 'Případová studie: Zvýšení prodeje o 25 % díky interaktivní ukázce',
-    excerpt: 'Detailní analýza nasazení Imersa technologie v rezidenčním projektu na okraji Prahy.',
-    readTime: '5 min čtení',
-    content: {
-      lead: 'Developer Silverline Group čelil situaci, se kterou se dnes potýká většina středních developerů — přesycený trh novostaveb, zákazníci zahrnuti statickými renderingy a klesající konverzní poměr ze schůzky k podpisu rezervační smlouvy.',
-      sections: [
-        {
-          heading: 'Výzva',
-          body: 'Rezidenční projekt Rezidence Vinoř na okraji Prahy nabízel 48 bytových jednotek ve čtyřech patrech. Prodejní tým měl k dispozici klasický set — tištěné prospekty, statické vizualizace a fyzický showroom otevřený jen v pracovní době. Průměrná doba od první schůzky k podpisu smlouvy se pohybovala kolem 6 týdnů. Každý třetí zájemce odešel bez rozhodnutí.',
-        },
-        {
-          heading: 'Řešení',
-          body: 'V únoru 2026 nasadil Silverline Group 3D interaktivní konfigurátor od Imersa. Zákazník si mohl z libovolného zařízení — telefonu, tabletu i počítače — projít celou budovu patro po patře, zobrazit si konkrétní byt, vybrat dispozici a rovnou vidět orientační cenu i měsíční splátku. Celý systém byl napojen na CRM Raynet, takže každá interakce automaticky vytvářela záznam kontaktu.',
-        },
-        {
-          heading: 'Výsledky po 3 měsících',
-          body: 'Počet uzavřených rezervačních smluv vzrostl o 25 % ve srovnání se stejným obdobím předchozího roku. Průměrná doba rozhodování se zkrátila z 6 na 3,5 týdne. Obchodní tým zaznamenal výrazně lépe připravené klienty — zákazníci, kteří prošli konfigurátorem, přicházeli na schůzku s konkrétním výběrem bytu a jasnou představou o ceně.',
-        },
-        {
-          heading: 'Slovo developera',
-          body: '"Čekali jsme zlepšení, ale ne tak rychlé. Největší překvapení bylo, že klienti začali přicházet na prohlídku showroomu až poté, co si byt \'koupili\' online — přišli si ho jen potvrdit fyzicky. To byl pro nás zásadní posun." — Jana Kratochvílová, obchodní ředitelka Silverline Group',
         },
       ],
     },

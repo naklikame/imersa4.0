@@ -14,18 +14,24 @@
   </url>
 
   <url>
+    <loc>https://imersa.cz/blog/cnb-zvyseni-sazeb-developer</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://imersa.cz/blog/konfigurator-vs-showroom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
     <loc>https://imersa.cz/blog/5-chyb-developeri-prodej-off-plan</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <url>
-    <loc>https://imersa.cz/blog/zvyseni-prodeje-25-procent</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
+<url>
     <loc>https://imersa.cz/blog/3d-konfigurator-prodej-nemovitosti</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
