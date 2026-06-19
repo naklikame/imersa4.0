@@ -191,6 +191,21 @@ export default function ArticlePage() {
           })}
         </div>
 
+        {/* Sources */}
+        {article.sources && article.sources.length > 0 && (
+          <div className="mt-12 pt-8 border-t border-anthracite/[0.08]">
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-anthracite/35 mb-4">Použité zdroje</p>
+            <ul className="space-y-2">
+              {article.sources.map((source, i) => (
+                <li key={i} className="flex gap-3 text-[13px] text-anthracite/50 leading-relaxed">
+                  <span className="flex-none text-forest/50 font-bold">{i + 1}.</span>
+                  {source}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* CTA */}
         <div className="mt-12 bg-[#2C3B2A] rounded-2xl px-7 py-9 sm:px-10 text-center">
           <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-forest/70 block mb-3">Imersa</span>

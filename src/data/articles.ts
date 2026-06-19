@@ -12,6 +12,7 @@ export type Article = {
     lead: string;
     sections: ArticleSection[];
   };
+  sources?: string[];
 };
 
 export const articles: Article[] = [
@@ -52,6 +53,13 @@ export const articles: Article[] = [
         },
       ],
     },
+    sources: [
+      'ČNB.cz: Aleš Michl: Důvody pro červnové zvýšení sazeb zesílily a oficiální oznámení o změně sazeb.',
+      'RealityČechy.cz: Hypotéky pod tlakem. ČNB poprvé po čtyřech letech zvýšila sazby.',
+      'Novinky.cz / ČT24.cz: Agregované zpravodajství o dopadu zvýšení repo sazby na 3,75 % na českou ekonomiku.',
+      'Swiss Life Hypoindex: Údaje o překročení hranice 5,3 % u průměrných hypotečních sazeb počátkem června.',
+      'Ekospol: Vyjádření E. Korce k růstu úrokových swapů a nacenění hypoték.',
+    ],
   },
   {
     slug: 'konfigurator-vs-showroom',
