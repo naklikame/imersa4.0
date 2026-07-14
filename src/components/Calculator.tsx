@@ -149,6 +149,15 @@ function Tooltip({ text, selected = false }: { text: string; selected?: boolean 
     setOpen(true);
   }
 
+  useEffect(() => {
+    if (!open) return;
+    function handleOutside(e: MouseEvent) {
+      if (btnRef.current && !btnRef.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [open]);
+
   const arrow = {
     right:  'absolute left-[-5px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-t-transparent border-b-transparent border-r-anthracite',
     left:   'absolute right-[-5px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-4 border-t-transparent border-b-transparent border-l-anthracite',
@@ -171,20 +180,17 @@ function Tooltip({ text, selected = false }: { text: string; selected?: boolean 
         <Info size={13} strokeWidth={2} />
       </span>
       {open && createPortal(
-        <>
-          <span className="fixed inset-0 z-[9998]" onClick={() => setOpen(false)} />
-          <span
-            style={{
-              position: 'fixed', zIndex: 9999,
-              top: pos.top, left: pos.left,
-              transform: pos.placement !== 'bottom' ? 'translateY(-50%)' : 'none',
-            }}
-            className="w-52 bg-anthracite text-greige text-[12px] leading-relaxed rounded-xl px-3 py-2.5 shadow-xl pointer-events-none"
-          >
-            {text}
-            <span className={arrow[pos.placement]} />
-          </span>
-        </>,
+        <span
+          style={{
+            position: 'fixed', zIndex: 9999,
+            top: pos.top, left: pos.left,
+            transform: pos.placement !== 'bottom' ? 'translateY(-50%)' : 'none',
+          }}
+          className="w-52 bg-anthracite text-greige text-[12px] leading-relaxed rounded-xl px-3 py-2.5 shadow-xl pointer-events-none"
+        >
+          {text}
+          <span className={arrow[pos.placement]} />
+        </span>,
         document.body
       )}
     </span>
